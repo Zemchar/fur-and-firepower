@@ -22,7 +22,7 @@ To commit files from your machine to the repo the syntax is (from root unity dir
 ```
 git add .
 git commit -m "{Description goes here}"
-git push -u main
+git push -u origin main
 ```
 **Commit as often as possible**
 
