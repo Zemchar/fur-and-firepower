@@ -31,3 +31,5 @@ git push -u main
 ## Art
 Please upload your files directly to this repo using github web. Place them in the appropriate folders so the developers have proper access to them.
 If you are so inclined, attach a description to explain where devs should put it in the level etc. 
+# Playtesting
+Weekly builds will be released over in the releases tab. You may post feedback on the discord in the appropriate channel. Please include a video of your play session if possible! (google drive link or something works perfectly fine)
