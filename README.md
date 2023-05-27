@@ -13,6 +13,7 @@ Next go to your github settings, scroll all the way down to developer settings a
 Create a basic access token with repo read/write access and save it somewhere.
 Next return to terminal and run these commands
 ```
+git remote remove origin
 git remote add origin "https://{YOUR_GITHUB_USERNAME}:{PERSONAL ACCESS TOKEN YOU JUST GENERATED}@github.com/Zemchar/fur-and-firepower.git"
 git pull
 ```
