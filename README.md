@@ -2,7 +2,7 @@
 Fun little game
 # Contributing
 ## Programming
-First install git with your preffered method. Then run the commands
+First install git with your preffered method. Then run the following commands in terminal or windows powershell (i think powershell works idk tho)
 ```
 git clone https://github.com/Zemchar/fur-and-firepower.git
 git config --global user.name "Your Name"
