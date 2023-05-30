@@ -20,6 +20,7 @@ public class BossPlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Confined;
         rb = GetComponent<Rigidbody>();
         Debug.Log(kb);
+        speed *= 100;
     }
 
     // Update is called once per frame
