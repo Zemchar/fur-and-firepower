@@ -1,10 +1,19 @@
 {
   "dependencies": {
-    "com.spoiledcat.git": {
+    "com.spoiledcat.git.api": {
+      "version": "1.0.12",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://registry.spoiledcat.com"
+    },
+    "com.spoiledcat.git.ui": {
       "version": "1.0.12",
       "depth": 0,
       "source": "registry",
-      "dependencies": {},
+      "dependencies": {
+        "com.spoiledcat.git.api": "1.0.12"
+      },
       "url": "https://registry.spoiledcat.com"
     },
     "com.unity.burst": {
