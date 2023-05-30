@@ -1,8 +1,25 @@
 # Fur And Firepower
 Fun little game
+
+Trello: [https://trello.com/invite/furandfirepower/ATTId9d41f877b43dfa759984ce1cd882047A622DF1E](url)
 # Contributing
-## Programming
-First install git with your preffered method. Then run the following commands in terminal or windows powershell (i think powershell works idk tho)
+## Getting started Programming with [a Git Manager](https://github.com/spoiledcat/git-for-unity)
+First, install git from their website or your package manager. 
+
+Next, Navigate to your GitHub user settings and find "developer Settings" and click on "personal access tokens" within that menu.
+Create a classic token with read/write access to reposotories at the minnimum and save it somewhere.
+
+Finally run the following commands in terminal or Windows powershell (or cmd)
+
+(Replace any brackets with the information requested)
+```
+git clone https://{YOUR_GITHUB_USERNAME}:{PERSONAL ACCESS TOKEN YOU JUST GENERATED}@github.com/Zemchar/fur-and-firepower.git
+```
+Next, open the project in unity. The github manager program should already be installed. If it is not, install it from the link at the title of this section
+
+You are done! Remember to commit often and request locks when you do work on commonly accesed files
+## Programming with raw git
+First install git with your preffered method. Then run the following commands in terminal or windows powershell (cmd also works)
 ```
 git clone https://github.com/Zemchar/fur-and-firepower.git
 git config --global user.name "Your Name"
@@ -18,7 +35,7 @@ git remote add origin "https://{YOUR_GITHUB_USERNAME}:{PERSONAL ACCESS TOKEN YOU
 git pull
 ```
 If there are no errors, horray you are now ready to commit things!
-**If you are not using command line git and instead plan on using a manager, skip the rest of this and figure out how your manager works**
+
 To commit files from your machine to the repo the syntax is (from root unity directory)
 ```
 git add .
@@ -26,6 +43,7 @@ git commit -m "{Description goes here}"
 git push -u origin main
 ```
 **Commit as often as possible**
+
 
 ### Always remember to git pull whenever you start programming! And comment your code pretty please
 
