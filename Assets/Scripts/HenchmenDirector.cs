@@ -24,6 +24,7 @@ public class HenchmenDirector : MonoBehaviour
     {
         foreach (var henchmen in targets)
         {
+            //loops thru dictionary and sets all henchmen to their targets
             henchmen.Key.GetComponent<HenchmenController>().SetTarget(henchmen.Value);
         }
     }
