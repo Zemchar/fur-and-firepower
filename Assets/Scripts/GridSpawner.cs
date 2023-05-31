@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GridSpawner : MonoBehaviour
 {
-    [SerializeField] private GameObject roadPiece;
+    [SerializeField] private GameObject[] roadPiece;
     private int gridSize = 7; //size of the grid
     private int tileWidth = 60; //size of each grid tile
 
@@ -15,7 +15,9 @@ public class GridSpawner : MonoBehaviour
         {
             for (var col = -gridSize * tileWidth; col <= gridSize * tileWidth; col += tileWidth)
             {
-                GameObject temp = Instantiate(roadPiece, new Vector3(row, 0, col), new Quaternion(0, 0, 0, 0));
+                int roadNum = Random.Range(0, roadPiece.Length);
+
+                GameObject temp = Instantiate(roadPiece[roadNum], new Vector3(row, 0, col), roadPiece[roadNum].transform.rotation);
                 temp.transform.SetParent(this.transform);
             }
         }

@@ -11498,8 +11498,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92fa6d951d3e07d44a427a34d1e73d2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roadPiece: {fileID: 7531591240611823186, guid: b8f36be2cfdfc784292e9df348e18fe1,
-    type: 3}
+  roadPiece:
+  - {fileID: 7531591240611823186, guid: b8f36be2cfdfc784292e9df348e18fe1, type: 3}
+  - {fileID: 4897179080636805606, guid: 29c4fbd082f9e96418f0437a95738e72, type: 3}
+  - {fileID: 2303329371511215228, guid: 80b585c37107e1d4a8d3a6b03ce411c9, type: 3}
 --- !u!1 &1202718525
 GameObject:
   m_ObjectHideFlags: 0
