@@ -1,9 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
+using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 
 public class BossPlayerController : MonoBehaviour
@@ -16,6 +19,7 @@ public class BossPlayerController : MonoBehaviour
     private Keyboard kb;
     private Mouse ms;
     public GlobalVars.TeamAlignment teamAlignment;
+    private List<GameObject> SelectedUnits = new List<GameObject>();
     private void Start()
     {
         kb = Keyboard.current;
@@ -35,13 +39,22 @@ public class BossPlayerController : MonoBehaviour
         }
         Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
         rb.velocity = Vector3.ClampMagnitude(move * (speedMultiplier * Time.deltaTime), maxSpeed);
-        // if (rb.velocity.magnitude > 5)
-        // {
-        //     Debug.Log("Last Frame Time: " + Time.deltaTime + "\nSpeed: " + rb.velocity.magnitude);
-        // }
     }
     void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
+    }
+
+    void OnSelect(InputValue value)
+    {
+        Debug.Log($"MouseDown at {ms.position.ReadValue()}");
+        RaycastHit hit;
+        Ray target = Camera.main.ScreenPointToRay(ms.position.ReadValue());
+        Physics.Raycast(target, out hit);
+        if (hit.collider.gameObject.layer == 5)
+        {
+            Debug.Log($"Hit {hit.collider.name}");
+            SelectedUnits.Append(hit.collider.gameObject.GetComponent<HenchmenController>().RequestSelect(this.gameObject));
+        }       
     }
 }

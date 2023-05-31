@@ -21,4 +21,5 @@ public class GlobalVars : ScriptableObject
         Structure_CapoHomeFriendly,
         Structure_PoliceStation,
     }
+    
 }
