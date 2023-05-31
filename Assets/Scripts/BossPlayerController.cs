@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
+using UnityEngine.Serialization;
 
 public class BossPlayerController : MonoBehaviour
 {
     private Rigidbody rb;
     
-    [SerializeField] float speed = 30f;
+    [FormerlySerializedAs("speed")] [SerializeField] float speedMultiplier = 12f;
+    [SerializeField] float maxSpeed = 5f;
     Vector2 moveInput;
     private Keyboard kb;
     private Mouse ms;
@@ -21,7 +23,7 @@ public class BossPlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Confined;
         rb = GetComponent<Rigidbody>();
         Debug.Log(kb);
-        speed *= 100;
+        speedMultiplier *= 100;
     }
 
     // Update is called once per frame
@@ -32,7 +34,11 @@ public class BossPlayerController : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
         }
         Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
-        rb.velocity = move * (speed * Time.deltaTime);
+        rb.velocity = Vector3.ClampMagnitude(move * (speedMultiplier * Time.deltaTime), maxSpeed);
+        // if (rb.velocity.magnitude > 5)
+        // {
+        //     Debug.Log("Last Frame Time: " + Time.deltaTime + "\nSpeed: " + rb.velocity.magnitude);
+        // }
     }
     void OnMove(InputValue value)
     {
