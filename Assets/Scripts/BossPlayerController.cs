@@ -51,10 +51,27 @@ public class BossPlayerController : MonoBehaviour
         RaycastHit hit;
         Ray target = Camera.main.ScreenPointToRay(ms.position.ReadValue());
         Physics.Raycast(target, out hit);
-        if (hit.collider.gameObject.layer == 5)
+        if (hit.collider.gameObject.layer == 4)
         {
             Debug.Log($"Hit {hit.collider.name}");
             SelectedUnits.Append(hit.collider.gameObject.GetComponent<HenchmenController>().RequestSelect(this.gameObject));
         }       
+    }
+
+    void OnRelease(InputValue value)
+    {
+        Debug.Log($"MouseDown at {ms.position.ReadValue()}");
+        RaycastHit hit;
+        Ray target = Camera.main.ScreenPointToRay(ms.position.ReadValue());
+        Physics.Raycast(target, out hit);
+        if (hit.collider.gameObject.layer == 4)
+        {
+            Dictionary<GameObject, GameObject> tempDict = new Dictionary<GameObject, GameObject>();
+            foreach (var unit in SelectedUnits)
+            {
+                tempDict.Append(new KeyValuePair<GameObject, GameObject>(unit, hit.collider.gameObject));
+            } 
+            GameObject.FindObjectOfType<HenchmenDirector>().RedirectHenchmen(tempDict, this.gameObject);
+        }
     }
 }
