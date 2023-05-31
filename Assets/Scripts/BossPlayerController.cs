@@ -20,7 +20,7 @@ public class BossPlayerController : MonoBehaviour
     {
         kb = Keyboard.current;
         ms = Mouse.current;
-        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.lockState = CursorLockMode.Locked;
         rb = GetComponent<Rigidbody>();
         Debug.Log(kb);
         speedMultiplier *= 100;
