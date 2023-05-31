@@ -11499,9 +11499,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roadPiece:
-  - {fileID: 7531591240611823186, guid: b8f36be2cfdfc784292e9df348e18fe1, type: 3}
   - {fileID: 4897179080636805606, guid: 29c4fbd082f9e96418f0437a95738e72, type: 3}
-  - {fileID: 2303329371511215228, guid: 80b585c37107e1d4a8d3a6b03ce411c9, type: 3}
+  - {fileID: 675034739931272496, guid: f0a4d0fbca6cd11409f3a6852dbbfc2f, type: 3}
+  - {fileID: 3027720742302425261, guid: 68a2e2bae67a8564c982aa38b303e897, type: 3}
+  - {fileID: 7531591240611823186, guid: b8f36be2cfdfc784292e9df348e18fe1, type: 3}
+  - {fileID: 977847298522721838, guid: e35c88100d2fd764a822fbb4c1052058, type: 3}
 --- !u!1 &1202718525
 GameObject:
   m_ObjectHideFlags: 0
