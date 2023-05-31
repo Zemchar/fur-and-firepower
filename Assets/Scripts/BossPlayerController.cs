@@ -13,6 +13,7 @@ public class BossPlayerController : MonoBehaviour
     Vector2 moveInput;
     private Keyboard kb;
     private Mouse ms;
+    public GlobalVars.TeamAlignment teamAlignment;
     private void Start()
     {
         kb = Keyboard.current;
@@ -36,6 +37,5 @@ public class BossPlayerController : MonoBehaviour
     void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
-        Debug.Log(moveInput);
     }
 }
