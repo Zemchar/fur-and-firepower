@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Rendering;
+using Random = UnityEngine.Random;
 
 public class HenchmenController : MonoBehaviour
 {
@@ -14,20 +17,29 @@ public class HenchmenController : MonoBehaviour
         Attacking,
         Dead
     }
-    public HenchmenState henchmenState;
-    public GlobalVars.TeamAlignment teamAlignment;
-    public GameObject Owner;
+    
     private GlobalVars.TargetType defaultAction = GlobalVars.TargetType.None;
     private GameObject CurrentTarget;
     private GlobalVars.TargetType CurrentTargetType;
-    [Tooltip("Controls the distance until the henchmen will start attacking.")]
-    [SerializeField] private Vector3 min_TargetDistance; // When will the henchmen start attacking
+    [Header("Behavior Properties")]
+    [Tooltip("Controls the distance until the henchmen will start attacking.")] [SerializeField]
+    private Vector3 min_TargetDistance; // When will the henchmen start attacking
+    public HenchmenState henchmenState;
+    public GlobalVars.TeamAlignment teamAlignment;
+    public GameObject Owner;
+    
     private NavMeshAgent agent;
     private int Ammo;
     private float shootDelay;
     private bool isShooting = false;
-    [Tooltip("X is Min, Y is Max")]
+    [Header("Bullet Properties")]
+    [SerializeField] int maxAmmo = 50;
+    [Tooltip("X is Min, Y is Max. Controls how many bullets are fired at once.")]
     [SerializeField] Vector2 minMaxBullets = new Vector2(1, 3);
+    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private Vector3 MaxSpread;
+    [SerializeField] private float bulletSpeed;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -48,10 +60,12 @@ public class HenchmenController : MonoBehaviour
                     break;
                 case GlobalVars.TargetType.Enemy:
                     agent.SetDestination(CurrentTarget.transform.position);
+                    Debug.DrawLine(gameObject.transform.position, CurrentTarget.transform.position, Color.blue);
                     //check if target is in range
                     if (Vector3.Distance(this.transform.position, CurrentTarget.transform.position) <
                         min_TargetDistance.magnitude)
                     {
+                        Debug.DrawLine(gameObject.transform.position, CurrentTarget.transform.position, Color.green);
                         agent.ResetPath();
                         henchmenState = HenchmenState.Attacking;
                     }
@@ -64,6 +78,12 @@ public class HenchmenController : MonoBehaviour
             switch (henchmenState)
             {
                 case HenchmenState.Attacking:
+                    Debug.DrawLine(gameObject.transform.position, CurrentTarget.transform.position, Color.red);
+                    if (!CurrentTarget.activeSelf)
+                    {
+                        henchmenState = HenchmenState.None;
+                        break;
+                    }
                     if(!isShooting)
                         StartCoroutine((string)Shoot());
                     break;
@@ -75,7 +95,7 @@ public class HenchmenController : MonoBehaviour
     {
         if (isShooting)
         {
-            yield break;
+            yield break;// dont shoot if already shooting
         }
         isShooting = true;
         while (Ammo > 0)
@@ -84,8 +104,15 @@ public class HenchmenController : MonoBehaviour
             var bullets = UnityEngine.Random.Range((int)minMaxBullets.x, (int)minMaxBullets.y);
             for (var i = 0; i < bullets; i++)
             {
-                //spawn bullet
-                
+                GameObject bulletOBJ = Instantiate(bulletPrefab, this.transform.position, Quaternion.identity);
+                Vector3 dir = CurrentTarget.transform.position -
+                              gameObject.GetComponentsInChildren<Transform>().Where(r => r.tag == "BulletSpawnPoint")
+                                  .ToArray()[0].position
+                              + new Vector3(Random.Range(0, MaxSpread.x), 
+                                  Random.Range(0f, MaxSpread.y),
+                                  Random.Range(0f, MaxSpread.z));
+                bulletOBJ.transform.forward = dir.normalized;
+                bulletOBJ.GetComponent<Rigidbody>().AddForce(dir.normalized * bulletSpeed, ForceMode.Impulse);
             }
             yield return new WaitForSeconds(shootDelay);
         }
@@ -102,8 +129,21 @@ public class HenchmenController : MonoBehaviour
             CurrentTarget = target;
         }
         catch{
-            Debug.LogError("Target does not have AccessableProperties, defualting.");
-            CurrentTargetType = defaultAction;
+            Debug.LogError($"Target {target.name} does not have AccessableProperties TargetType, defualting.");
+            CurrentTargetType = defaultAction; 
         } }
+
+    public GameObject RequestSelect(GameObject requester)
+    {
+        if (requester.GetComponent<AccessableProperties>().TeamAlignment == teamAlignment)
+        {
+            return this.gameObject;
+        }
+        else
+        {
+            return null;
+        }
+            
+    }
 
 }
