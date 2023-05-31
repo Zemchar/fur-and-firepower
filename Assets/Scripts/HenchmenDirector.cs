@@ -20,11 +20,11 @@ public class HenchmenDirector : MonoBehaviour
         }
     }
     
-    public void RedirectHenchmen(List<GameObject> targets)
+    public void RedirectHenchmen(Dictionary<GameObject, GameObject> targets)
     {
         foreach (var henchmen in targets)
         {
-            henchmen.GetComponent<HenchmenController>().SetTarget(target);
+            henchmen.Key.GetComponent<HenchmenController>().SetTarget(henchmen.Value);
         }
     }
 }
