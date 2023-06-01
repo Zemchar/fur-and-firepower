@@ -56,7 +56,7 @@ public class BossPlayerController : MonoBehaviour
             var tempDict = new Dictionary<GameObject, GameObject>();
             foreach(var unit in SelectedUnits)
             {
-                tempDict.Append(new KeyValuePair<GameObject, GameObject>(unit, hit.collider.gameObject));
+                tempDict.Add(unit, hit.collider.gameObject);
             }
 
             object[] tempArray = new object[2];
@@ -85,11 +85,12 @@ public class BossPlayerController : MonoBehaviour
     public void Select(GameObject unit)
     {
         Debug.Log("Selected " + unit.name);
-        SelectedUnits.Append(unit);
+        SelectedUnits.Add(unit);
+        Debug.Log("BreakPoint");
     }
 
     // void OnRelease(InputValue value)
-    // {
+    // {d
     //     Debug.Log($"MouseDown at {ms.position.ReadValue()}");
     //     RaycastHit hit;
     //     Ray target = Camera.main.ScreenPointToRay(ms.position.ReadValue());

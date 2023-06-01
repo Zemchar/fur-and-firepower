@@ -1346,14 +1346,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TeamAlignment: 0
-  TargetType: 1
+  TargetType: 0
 --- !u!43 &717859597
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh28468
+  m_Name: pb_Mesh28470
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1854,7 +1854,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1049492707}
-  m_LocalRotation: {x: 0.18433107, y: 0.000000016911539, z: -0.0000000031716711, w: 0.98286426}
+  m_LocalRotation: {x: 0.18433107, y: -0.000000016911535, z: 0.0000000031716703, w: 0.98286426}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
