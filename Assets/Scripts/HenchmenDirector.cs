@@ -21,17 +21,22 @@ public class HenchmenDirector : MonoBehaviour
             henchmenDict.Append(new KeyValuePair<GameObject, GlobalVars.TeamAlignment>(henchmen, teamAlignment));
         }
     }
-    public void RedirectHenchmen(Dictionary<GameObject, GameObject> targets, GameObject Requester)
+    public void RedirectHenchmen(object[] input)
     {
+        Debug.Log("Message Received. Redirecting Henchmen");
+        var targets = (Dictionary<GameObject, GameObject>)input[0];
+        var requester = (GameObject)input[1];
         foreach (var henchmen in targets)
         {
-            if (henchmenDict[henchmen.Key] != henchmen.Value.GetComponent<HenchmenController>().teamAlignment)
+            Debug.Log("Redirecting " + henchmen.Key.name + " to " + henchmen.Value.name);
+            if (henchmenDict[henchmen.Key] != requester.GetComponent<Accessibleproperties>().TeamAlignment)
             {
-                Debug.Log("Henchmen " + henchmen.Key.name + " is not on the same team as " + Requester.gameObject.name + "and cannot be redirected.");
+                Debug.Log("Henchmen " + henchmen.Key.name + " is not on the same team as " + requester.gameObject.name + "and cannot be redirected.");
                 continue;
             }
             //loops thru dictionary and sets all henchmen to their targets
-            henchmen.Key.GetComponent<HenchmenController>().SetTarget(henchmen.Value);
+            henchmen.Key.SendMessage("SetTarget", henchmen.Value);
+            Debug.Log("Redirected " + henchmen.Key.name + " to " + henchmen.Value.name);
         }
     }
 }

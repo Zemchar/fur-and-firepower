@@ -39,11 +39,14 @@ public class HenchmenController : MonoBehaviour
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private Vector3 MaxSpread;
     [SerializeField] private float bulletSpeed;
+    [SerializeField] private Canvas SelectedInicator;
+    [SerializeField] private Animation Bobber;
 
     // Start is called before the first frame update
     void Start()
     {
         agent = this.gameObject.GetComponent<NavMeshAgent>();
+        SelectedInicator.enabled = false;
     }
     // Update is called once per frame
     void Update()
@@ -56,7 +59,7 @@ public class HenchmenController : MonoBehaviour
                     /*This one is going to be the hardest to implement, so I'm leaving it for last.\\
                      * It will be used for things like protecting the player, or just standing around.\\
                      */
-                    throw new NotImplementedException();
+                    // throw new NotImplementedException();
                     break;
                 case GlobalVars.TargetType.Enemy:
                     agent.SetDestination(CurrentTarget.transform.position);
@@ -125,25 +128,25 @@ public class HenchmenController : MonoBehaviour
     public void SetTarget(GameObject target)
     {
         try{
-            CurrentTargetType = target.GetComponent<AccessableProperties>().TargetType;
+            CurrentTargetType = target.GetComponent<Accessibleproperties>().TargetType;
             CurrentTarget = target;
         }
         catch{
-            Debug.LogError($"Target {target.name} does not have AccessableProperties TargetType, defualting.");
+            Debug.LogError($"Target {target.name} does not have AccessibleProperties TargetType, defualting.");
             CurrentTargetType = defaultAction; 
         } }
 
-    public GameObject RequestSelect(GameObject requester)
+    public void RequestSelect(GameObject requester)
     {
-        if (requester.GetComponent<AccessableProperties>().TeamAlignment == teamAlignment)
+        Debug.Log($"Request to select {this.gameObject.name} from {requester.name}");
+        if (requester.GetComponent<Accessibleproperties>().TeamAlignment == teamAlignment)
         {
-            return this.gameObject;
+            SelectedInicator.enabled = true;
+            Bobber.Play();
+            requester.SendMessage("Select", this.gameObject);
         }
-        else
-        {
-            return null;
-        }
-            
+        //If not true, do not return confirmation message
+
     }
 
 }

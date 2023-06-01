@@ -6,6 +6,7 @@ public class GlobalVars : ScriptableObject
 {
     public enum TeamAlignment
     {
+        None,
         Snazz,
         Sting,
         Moxie,
