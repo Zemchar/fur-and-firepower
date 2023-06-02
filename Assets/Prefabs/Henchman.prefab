@@ -214,15 +214,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e013831cfeb7c608e8c21c2ad5009093, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  min_TargetDistance: {x: 0, y: 0, z: 0}
+  min_TargetDistance: {x: 1, y: 1, z: 1}
   henchmenState: 0
   teamAlignment: 0
   Owner: {fileID: 0}
   maxAmmo: 50
   minMaxBullets: {x: 1, y: 3}
-  bulletPrefab: {fileID: 0}
+  bulletPrefab: {fileID: 2236732899997573981, guid: 05a7f3b2ffb0bacee803b18d0e406f7a,
+    type: 3}
   MaxSpread: {x: 0, y: 0, z: 0}
-  bulletSpeed: 0
+  bulletSpeed: 1000
   SelectedInicator: {fileID: 7331154975346931814}
   Bobber: {fileID: 1476944873302872523}
 --- !u!195 &7108836126035215963

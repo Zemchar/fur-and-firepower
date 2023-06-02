@@ -1014,7 +1014,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9223b2a33b2a1fa6a95230263c23369, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TeamAlignment: 0
+  TeamAlignment: 1
   TargetType: 1
 --- !u!1 &712604766
 GameObject:
@@ -1854,7 +1854,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1049492707}
-  m_LocalRotation: {x: 0.18433107, y: -0.000000016911535, z: 0.0000000031716703, w: 0.98286426}
+  m_LocalRotation: {x: 0.18433107, y: 0.000000016911539, z: -0.0000000031716711, w: 0.98286426}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2156,7 +2156,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1421950873}
-  m_LocalRotation: {x: 0.21991187, y: 0.00000004111508, z: -0.000000009268591, w: 0.9755198}
+  m_LocalRotation: {x: 0.21991189, y: -4.1012133e-15, z: 1.2859581e-15, w: 0.9755198}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2327,6 +2327,21 @@ PrefabInstance:
       propertyPath: SelectedInicator
       value: 
       objectReference: {fileID: 1960688266}
+    - target: {fileID: 4198588045314329062, guid: 277f845dd9bbf9648a51f318fef8e5df,
+        type: 3}
+      propertyPath: min_TargetDistance.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4198588045314329062, guid: 277f845dd9bbf9648a51f318fef8e5df,
+        type: 3}
+      propertyPath: min_TargetDistance.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4198588045314329062, guid: 277f845dd9bbf9648a51f318fef8e5df,
+        type: 3}
+      propertyPath: min_TargetDistance.z
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 4198588045314329065, guid: 277f845dd9bbf9648a51f318fef8e5df,
         type: 3}
       propertyPath: m_Name

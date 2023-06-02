@@ -29,7 +29,7 @@ public class HenchmenController : MonoBehaviour
     public GameObject Owner;
     
     private NavMeshAgent agent;
-    private int Ammo;
+    private int Ammo = 50;
     private float shootDelay;
     private bool isShooting = false;
     [Header("Bullet Properties")]
@@ -47,6 +47,7 @@ public class HenchmenController : MonoBehaviour
     {
         agent = this.gameObject.GetComponent<NavMeshAgent>();
         SelectedInicator.enabled = false;
+        Ammo = maxAmmo;
     }
     // Update is called once per frame
     void Update()
@@ -65,7 +66,7 @@ public class HenchmenController : MonoBehaviour
                     agent.SetDestination(CurrentTarget.transform.position);
                     Debug.DrawLine(gameObject.transform.position, CurrentTarget.transform.position, Color.blue);
                     //check if target is in range
-                    if (Vector3.Distance(this.transform.position, CurrentTarget.transform.position) <
+                    if (Vector3.Distance(this.transform.position, CurrentTarget.transform.position) <=
                         min_TargetDistance.magnitude)
                     {
                         Debug.DrawLine(gameObject.transform.position, CurrentTarget.transform.position, Color.green);
@@ -87,15 +88,16 @@ public class HenchmenController : MonoBehaviour
                         henchmenState = HenchmenState.None;
                         break;
                     }
-                    if(!isShooting)
-                        StartCoroutine((string)Shoot());
+                    else if(!isShooting)
+                        StartCoroutine(Shoot());
                     break;
             }
         }
     }
 
-    private IEnumerable Shoot()
+    private IEnumerator Shoot()
     {
+        print("Shooting");
         if (isShooting)
         {
             yield break;// dont shoot if already shooting
@@ -109,13 +111,12 @@ public class HenchmenController : MonoBehaviour
             {
                 GameObject bulletOBJ = Instantiate(bulletPrefab, this.transform.position, Quaternion.identity);
                 Vector3 dir = CurrentTarget.transform.position -
-                              gameObject.GetComponentsInChildren<Transform>().Where(r => r.tag == "BulletSpawnPoint")
-                                  .ToArray()[0].position
+                              gameObject.GetComponentsInChildren<Transform>().Where(r => r.tag == "BulletSpawnPoint").ToArray()[0].position
                               + new Vector3(Random.Range(0, MaxSpread.x), 
                                   Random.Range(0f, MaxSpread.y),
                                   Random.Range(0f, MaxSpread.z));
                 bulletOBJ.transform.forward = dir.normalized;
-                bulletOBJ.GetComponent<Rigidbody>().AddForce(dir.normalized * bulletSpeed, ForceMode.Impulse);
+                bulletOBJ.GetComponent<Rigidbody>().velocity = dir.normalized * bulletSpeed;
             }
             yield return new WaitForSeconds(shootDelay);
         }
