@@ -64,100 +64,104 @@ public class GridSpawner : MonoBehaviour
                 }
                 else //randomly fills grid, delete later
                 {
-                    var randomKey = pieces.Keys.ElementAt((int)Random.Range(2, pieces.Keys.Count));
+                    //var randomKey = pieces.Keys.ElementAt((int)Random.Range(2, pieces.Keys.Count));
 
-                    temp = Instantiate(pieces[randomKey], new Vector3(x, 0, y), pieces[randomKey].transform.rotation);
-                    temp.transform.SetParent(this.transform);
-                    grid[row, col] = temp;
+                    //temp = Instantiate(pieces[randomKey], new Vector3(x, 0, y), pieces[randomKey].transform.rotation);
+                    //temp.transform.SetParent(this.transform);
+                    //grid[row, col] = temp;
+                }
+            }
+        }
 
+        bool filled = false;
+
+        while (!filled)
+        {
+            //bottom left quadrant
+            int tempRow = Random.Range(1, gridSize / 2);
+            int tempCol = Random.Range(1, gridSize / 2);
+
+            if (grid[tempRow, tempCol] == null)
+                GridGenerator(tempRow, tempCol);
+
+            //bottom right quadrant
+            tempRow = Random.Range(gridSize / 2 + 1, gridSize - 1);
+            tempCol = Random.Range(1, gridSize / 2);
+
+            if (grid[tempRow, tempCol] == null)
+                GridGenerator(tempRow, tempCol);
+
+            //top left quadrant
+            tempRow = Random.Range(1, gridSize / 2);
+            tempCol = Random.Range(gridSize / 2 + 1, gridSize - 1);
+
+            if (grid[tempRow, tempCol] == null)
+                GridGenerator(tempRow, tempCol);
+
+            //top right quadrant
+            tempRow = Random.Range(gridSize / 2 + 1, gridSize - 1);
+            tempCol = Random.Range(gridSize / 2 + 1, gridSize - 1);
+
+            if (grid[tempRow, tempCol] == null)
+                GridGenerator(tempRow, tempCol);
+
+            //check if entire grid is filled
+            filled = true;
+            for (var row = 1; row < gridSize - 1; row++)
+            {
+                for (var col = 1; col < gridSize - 1; col++)
+                {
+                    if (grid[row, col] == null)
+                        filled = false;
                 }
             }
         }
 
 
-        for (var row = 1; row < gridSize - 1; row++)
-        {
-            for (var col = 1; col < gridSize - 1; col++)
-            {
-                x = tileWidth * (col - gridSize / 2);
-                y = tileWidth * (row - gridSize / 2);
+        //for (var row = 1; row < gridSize - 1; row++)
+        //{
+        //    for (var col = 1; col < gridSize - 1; col++)
+        //    {
+        //        x = tileWidth * (col - gridSize / 2);
+        //        y = tileWidth * (row - gridSize / 2);
 
-                foreach (BoxCollider box in grid[row, col].transform.Find("Colliders").GetComponentsInChildren<BoxCollider>())
-                    box.enabled = false;
-                Debug.Log(PieceChecker(x, y)); 
-                foreach (BoxCollider box in grid[row, col].transform.Find("Colliders").GetComponentsInChildren<BoxCollider>())
-                    box.enabled = true;
-            }
-        }
-
-
+        //        foreach (BoxCollider box in grid[row, col].transform.Find("Colliders").GetComponentsInChildren<BoxCollider>())
+        //            box.enabled = false;
+        //        //Debug.Log(PieceChecker(x, y));
+        //        foreach (BoxCollider box in grid[row, col].transform.Find("Colliders").GetComponentsInChildren<BoxCollider>())
+        //            box.enabled = true;
+        //    }
+        //}
 
 
-        /*
-        //bottom left quadrant
-        int tempRow = Random.Range(1, gridSize / 2);
-        int tempCol = Random.Range(1, gridSize / 2);
+
+
+
+    }
+
+    private void GridGenerator(int row, int col)
+    {
+        if (grid[row, col] != null)
+            return;
+            
         //converts row and col numbers into usable x and y coordinates
-        x = tileWidth * (tempRow - gridSize / 2);
-        y = tileWidth * (tempCol - gridSize / 2);
+        int x = tileWidth * (row - gridSize / 2);
+        int y = tileWidth * (col - gridSize / 2);
 
-        if (grid[tempRow, tempCol] == null)
-        {
-            temp = Instantiate(pieces["cross"], new Vector3(x, 0, y), pieces["cross"].transform.rotation);
-            temp.transform.SetParent(this.transform);
-            grid[tempRow, tempCol] = temp;
-        }
-        else
-            Debug.Log("aaa");
+        string tempPiece = PieceChecker(x, y);
+        GameObject temp = Instantiate(pieces[tempPiece], new Vector3(x, 0, y), pieces[tempPiece].transform.rotation);
+        temp.transform.SetParent(this.transform);
+        grid[row, col] = temp;
 
-        //bottom right quadrant
-        tempRow = Random.Range(gridSize / 2 + 1, gridSize - 1);
-        tempCol = Random.Range(1, gridSize / 2);
-        //converts row and col numbers into usable x and y coordinates
-        x = tileWidth * (tempRow - gridSize / 2);
-        y = tileWidth * (tempCol - gridSize / 2);
-
-        if (grid[tempRow, tempCol] == null)
-        {
-            temp = Instantiate(pieces["cross"], new Vector3(x, 0, y), pieces["cross"].transform.rotation);
-            temp.transform.SetParent(this.transform);
-            grid[tempRow, tempCol] = temp;
-        }
-        else
-            Debug.Log("aaa");
-
-        //top left quadrant
-        tempRow = Random.Range(1, gridSize / 2);
-        tempCol = Random.Range(gridSize / 2 + 1, gridSize - 1);
-        //converts row and col numbers into usable x and y coordinates
-        x = tileWidth * (tempRow - gridSize / 2);
-        y = tileWidth * (tempCol - gridSize / 2);
-
-        if (grid[tempRow, tempCol] == null)
-        {
-            temp = Instantiate(pieces["cross"], new Vector3(x, 0, y), pieces["cross"].transform.rotation);
-            temp.transform.SetParent(this.transform);
-            grid[tempRow, tempCol] = temp;
-        }
-        else
-            Debug.Log("aaa");
-
-        //top right quadrant
-        tempRow = Random.Range(gridSize / 2 + 1, gridSize - 1);
-        tempCol = Random.Range(gridSize / 2 + 1, gridSize - 1);
-        //converts row and col numbers into usable x and y coordinates
-        x = tileWidth * (tempRow - gridSize / 2);
-        y = tileWidth * (tempCol - gridSize / 2);
-
-        if (grid[tempRow, tempCol] == null)
-        {
-            temp = Instantiate(pieces["cross"], new Vector3(x, 0, y), pieces["cross"].transform.rotation);
-            temp.transform.SetParent(this.transform);
-            grid[tempRow, tempCol] = temp;
-        }
-        else
-            Debug.Log("aaa");
-        */
+        int rand = Random.Range(1, 4);
+        if (rand == 1)
+            GridGenerator(row + 1, col);
+        if (rand == 2)
+            GridGenerator(row, col + 1);
+        if (rand == 3)
+            GridGenerator(row - 1, col);
+        if (rand == 4)
+            GridGenerator(row, col - 1);
     }
 
     private string PieceChecker(int x, int y)
@@ -193,8 +197,8 @@ public class GridSpawner : MonoBehaviour
                 possiblePieces.Remove("T-up");
             }
         }
-        else
-            Debug.Log("Hitting nothing back");
+        //else
+            //Debug.Log("Hitting nothing back");
 
         if (Physics.Raycast(new Vector3(x, height, y), transform.TransformDirection(Vector3.left), out hit, 40, layerMask))
         {
@@ -223,8 +227,8 @@ public class GridSpawner : MonoBehaviour
                 possiblePieces.Remove("T-right");
             }  
         }
-        else
-            Debug.Log("Hitting nothing left");
+        //else
+            //Debug.Log("Hitting nothing left");
 
         if (Physics.Raycast(new Vector3(x, height, y), transform.TransformDirection(Vector3.right), out hit, 40, layerMask))
         {
@@ -253,8 +257,8 @@ public class GridSpawner : MonoBehaviour
                 possiblePieces.Remove("T-left");
             }  
         }
-        else
-            Debug.Log("Hitting nothing right");
+        //else
+            //Debug.Log("Hitting nothing right");
 
         if (Physics.Raycast(new Vector3(x, height, y), transform.TransformDirection(Vector3.forward), out hit, 40, layerMask))
         {
@@ -283,11 +287,18 @@ public class GridSpawner : MonoBehaviour
                 possiblePieces.Remove("T-down");
             }    
         }
-        else
-            Debug.Log("Hitting nothing forward");
+        //else
+        //Debug.Log("Hitting nothing forward");
+        if (possiblePieces.Count > 1)
+        {
+            possiblePieces.Remove("deadend-down");
+            possiblePieces.Remove("deadend-left");
+            possiblePieces.Remove("deadend-up");
+            possiblePieces.Remove("deadend-right");
+        }
 
         if (possiblePieces.Count <= 0)
-            return "none";
+            return "border";
         else
             return possiblePieces[Random.Range(0, possiblePieces.Count - 1)];
     }
