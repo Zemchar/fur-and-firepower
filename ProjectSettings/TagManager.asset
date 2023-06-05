@@ -6,6 +6,8 @@ TagManager:
   tags:
   - BulletSpawnPoint
   - Henchman
+  - Wall
+  - Road
   layers:
   - Default
   - TransparentFX
