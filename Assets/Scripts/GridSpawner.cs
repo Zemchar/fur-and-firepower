@@ -7,7 +7,7 @@ public class GridSpawner : MonoBehaviour
 {
     [SerializeField] private LayerMask layerMask;
     [SerializeField] private GameObject[] roadPiece;
-    [SerializeField] private int gridSize = 7; //size of the grid
+    [SerializeField] private int gridSize = 15; //size of the grid, works best with odd numbers
     private int tileWidth = 60; //size of each grid tile
     private GameObject[,] grid;
 
@@ -20,13 +20,6 @@ public class GridSpawner : MonoBehaviour
         gridSize += 2; //just to add a border around the grid
         grid = new GameObject[gridSize, gridSize];
 
-        GridGeneration();
-
-
-    }
-
-    private void GridGeneration()
-    {
         GameObject temp;
         int x;
         int y;
@@ -134,9 +127,6 @@ public class GridSpawner : MonoBehaviour
         //}
 
 
-
-
-
     }
 
     private void GridGenerator(int row, int col)
@@ -172,7 +162,7 @@ public class GridSpawner : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(new Vector3(x, height, y), transform.TransformDirection(Vector3.back), out hit, 40, layerMask))
         {
-            Debug.DrawRay(new Vector3(x, height, y), transform.TransformDirection(Vector3.back) * hit.distance, Color.green, Mathf.Infinity);
+            //Debug.DrawRay(new Vector3(x, height, y), transform.TransformDirection(Vector3.back) * hit.distance, Color.green, Mathf.Infinity);
             if (hit.transform.tag == "Wall")
             {
                 //Debug.Log("Hitting a Back Wall");
@@ -202,7 +192,7 @@ public class GridSpawner : MonoBehaviour
 
         if (Physics.Raycast(new Vector3(x, height, y), transform.TransformDirection(Vector3.left), out hit, 40, layerMask))
         {
-            Debug.DrawRay(new Vector3(x, height, y), transform.TransformDirection(Vector3.left) * hit.distance, Color.red, Mathf.Infinity);
+            //Debug.DrawRay(new Vector3(x, height, y), transform.TransformDirection(Vector3.left) * hit.distance, Color.red, Mathf.Infinity);
             if (hit.transform.tag == "Wall")
             {
                 //Debug.Log("Hitting a Left Wall");
@@ -232,7 +222,7 @@ public class GridSpawner : MonoBehaviour
 
         if (Physics.Raycast(new Vector3(x, height, y), transform.TransformDirection(Vector3.right), out hit, 40, layerMask))
         {
-            Debug.DrawRay(new Vector3(x, height, y), transform.TransformDirection(Vector3.right) * hit.distance, Color.blue, Mathf.Infinity);
+            //Debug.DrawRay(new Vector3(x, height, y), transform.TransformDirection(Vector3.right) * hit.distance, Color.blue, Mathf.Infinity);
             if (hit.transform.tag == "Wall")
             {
                 //Debug.Log("Hitting a Right Wall");
@@ -262,7 +252,7 @@ public class GridSpawner : MonoBehaviour
 
         if (Physics.Raycast(new Vector3(x, height, y), transform.TransformDirection(Vector3.forward), out hit, 40, layerMask))
         {
-            Debug.DrawRay(new Vector3(x, height, y), transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow, Mathf.Infinity);
+            //Debug.DrawRay(new Vector3(x, height, y), transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow, Mathf.Infinity);
             if (hit.transform.tag == "Wall")
             {
                 //Debug.Log("Hitting a Forward Wall");
