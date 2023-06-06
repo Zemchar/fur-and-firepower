@@ -49,20 +49,6 @@ public class GridSpawner : MonoBehaviour
                     temp.transform.SetParent(this.transform.Find("Border").transform);
                     grid[row, col] = temp;
                 }
-                else if (row == gridSize / 2 || col == gridSize / 2) //makes a cross in the grid, filling it with 4-way pieces
-                {
-                    temp = Instantiate(pieces["cross"], new Vector3(x, 0, y), pieces["cross"].transform.rotation);
-                    temp.transform.SetParent(this.transform);
-                    grid[row, col] = temp;
-                }
-                else //randomly fills grid, delete later
-                {
-                    //var randomKey = pieces.Keys.ElementAt((int)Random.Range(2, pieces.Keys.Count));
-
-                    //temp = Instantiate(pieces[randomKey], new Vector3(x, 0, y), pieces[randomKey].transform.rotation);
-                    //temp.transform.SetParent(this.transform);
-                    //grid[row, col] = temp;
-                }
             }
         }
 
@@ -71,29 +57,8 @@ public class GridSpawner : MonoBehaviour
         while (!filled)
         {
             //bottom left quadrant
-            int tempRow = Random.Range(1, gridSize / 2);
-            int tempCol = Random.Range(1, gridSize / 2);
-
-            if (grid[tempRow, tempCol] == null)
-                GridGenerator(tempRow, tempCol);
-
-            //bottom right quadrant
-            tempRow = Random.Range(gridSize / 2 + 1, gridSize - 1);
-            tempCol = Random.Range(1, gridSize / 2);
-
-            if (grid[tempRow, tempCol] == null)
-                GridGenerator(tempRow, tempCol);
-
-            //top left quadrant
-            tempRow = Random.Range(1, gridSize / 2);
-            tempCol = Random.Range(gridSize / 2 + 1, gridSize - 1);
-
-            if (grid[tempRow, tempCol] == null)
-                GridGenerator(tempRow, tempCol);
-
-            //top right quadrant
-            tempRow = Random.Range(gridSize / 2 + 1, gridSize - 1);
-            tempCol = Random.Range(gridSize / 2 + 1, gridSize - 1);
+            int tempRow = Random.Range(1, gridSize - 1);
+            int tempCol = Random.Range(1, gridSize - 1);
 
             if (grid[tempRow, tempCol] == null)
                 GridGenerator(tempRow, tempCol);
@@ -109,23 +74,6 @@ public class GridSpawner : MonoBehaviour
                 }
             }
         }
-
-
-        //for (var row = 1; row < gridSize - 1; row++)
-        //{
-        //    for (var col = 1; col < gridSize - 1; col++)
-        //    {
-        //        x = tileWidth * (col - gridSize / 2);
-        //        y = tileWidth * (row - gridSize / 2);
-
-        //        foreach (BoxCollider box in grid[row, col].transform.Find("Colliders").GetComponentsInChildren<BoxCollider>())
-        //            box.enabled = false;
-        //        //Debug.Log(PieceChecker(x, y));
-        //        foreach (BoxCollider box in grid[row, col].transform.Find("Colliders").GetComponentsInChildren<BoxCollider>())
-        //            box.enabled = true;
-        //    }
-        //}
-
 
     }
 
@@ -285,6 +233,13 @@ public class GridSpawner : MonoBehaviour
             possiblePieces.Remove("deadend-left");
             possiblePieces.Remove("deadend-up");
             possiblePieces.Remove("deadend-right");
+        }
+        if (possiblePieces.Count > 1)
+        {
+            possiblePieces.Remove("L-down");
+            possiblePieces.Remove("L-left");
+            possiblePieces.Remove("L-up");
+            possiblePieces.Remove("L-right");
         }
 
         if (possiblePieces.Count <= 0)

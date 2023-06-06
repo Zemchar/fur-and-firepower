@@ -5,10 +5,11 @@ using TMPro;
 
 public class RoadPiece : MonoBehaviour
 {
+    [SerializeField] private bool checkPath = false;
     public TextMeshPro stats;
     public string type;
 
-    private void Awake()
+    private void Start()
     {
         foreach (BoxCollider box in this.GetComponentsInChildren<BoxCollider>())
             box.enabled = false;
@@ -26,5 +27,7 @@ public class RoadPiece : MonoBehaviour
         }
 
     }
+
+
 
 }
