@@ -24,3 +24,11 @@ public class GlobalVars : ScriptableObject
     }
     
 }
+
+public static class Print
+{
+    public static void print(string message)
+    {
+        Debug.Log(message);
+    }
+}

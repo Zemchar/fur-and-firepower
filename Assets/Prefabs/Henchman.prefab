@@ -214,15 +214,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e013831cfeb7c608e8c21c2ad5009093, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  min_TargetDistance: {x: 0, y: 0, z: 0}
+  min_TargetDistance: {x: 1, y: 1, z: 1}
   henchmenState: 0
   teamAlignment: 0
   Owner: {fileID: 0}
   maxAmmo: 50
+  shootDelay: 3
   minMaxBullets: {x: 1, y: 3}
-  bulletPrefab: {fileID: 0}
-  MaxSpread: {x: 0, y: 0, z: 0}
-  bulletSpeed: 0
+  MaxSpread: {x: 0.1, y: 0.1, z: 0.1}
+  bulletSpawnPoint: {fileID: 4198588045343243791}
+  bulletTrail: {fileID: 7455253140147362857, guid: 275f2ffa03b5ababcb58185dca1e7433,
+    type: 3}
+  impactParticles: {fileID: 0}
   SelectedInicator: {fileID: 7331154975346931814}
   Bobber: {fileID: 1476944873302872523}
 --- !u!195 &7108836126035215963
@@ -258,7 +261,7 @@ GameObject:
   - component: {fileID: 4198588045343243791}
   m_Layer: 3
   m_Name: BulletSpawnPoint
-  m_TagString: Untagged
+  m_TagString: BulletSpawnPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

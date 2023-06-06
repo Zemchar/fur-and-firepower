@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Rendering;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class HenchmenController : MonoBehaviour
@@ -29,24 +30,28 @@ public class HenchmenController : MonoBehaviour
     public GameObject Owner;
     
     private NavMeshAgent agent;
-    private int Ammo;
-    private float shootDelay;
+    private int Ammo = 50;
     private bool isShooting = false;
     [Header("Bullet Properties")]
     [SerializeField] int maxAmmo = 50;
+    [SerializeField] float shootDelay;
     [Tooltip("X is Min, Y is Max. Controls how many bullets are fired at once.")]
     [SerializeField] Vector2 minMaxBullets = new Vector2(1, 3);
-    [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private Vector3 MaxSpread;
-    [SerializeField] private float bulletSpeed;
+    [SerializeField] Transform bulletSpawnPoint;
+    [Header("UI/UX Properties")]
+    [FormerlySerializedAs("bulletPrefab")] [SerializeField] private TrailRenderer bulletTrail;
+    [SerializeField] private ParticleSystem impactParticles;
     [SerializeField] private Canvas SelectedInicator;
     [SerializeField] private Animation Bobber;
+    
 
     // Start is called before the first frame update
     void Start()
     {
         agent = this.gameObject.GetComponent<NavMeshAgent>();
         SelectedInicator.enabled = false;
+        Ammo = maxAmmo;
     }
     // Update is called once per frame
     void Update()
@@ -65,7 +70,7 @@ public class HenchmenController : MonoBehaviour
                     agent.SetDestination(CurrentTarget.transform.position);
                     Debug.DrawLine(gameObject.transform.position, CurrentTarget.transform.position, Color.blue);
                     //check if target is in range
-                    if (Vector3.Distance(this.transform.position, CurrentTarget.transform.position) <
+                    if (Vector3.Distance(this.transform.position, CurrentTarget.transform.position) <=
                         min_TargetDistance.magnitude)
                     {
                         Debug.DrawLine(gameObject.transform.position, CurrentTarget.transform.position, Color.green);
@@ -87,49 +92,77 @@ public class HenchmenController : MonoBehaviour
                         henchmenState = HenchmenState.None;
                         break;
                     }
-                    if(!isShooting)
-                        StartCoroutine((string)Shoot());
+                    else if(!isShooting)
+                        StartCoroutine(Shoot());
                     break;
             }
         }
     }
-
-    private IEnumerable Shoot()
+    
+    private Vector3 CalculateFireDir()
     {
+        Vector3 dir = transform.forward;
+        //add spread
+        dir += new Vector3(Random.Range(-MaxSpread.x, MaxSpread.x), Random.Range(-MaxSpread.y, MaxSpread.y),
+            Random.Range(-MaxSpread.z, MaxSpread.z));
+        return dir.normalized;
+    }
+
+    private IEnumerator Shoot()
+    {
+        print("Shooting");
         if (isShooting)
         {
-            yield break;// dont shoot if already shooting
+            yield break; // dont shoot if already shooting
         }
+
         isShooting = true;
         while (Ammo > 0)
         {
             //shoot
             var bullets = UnityEngine.Random.Range((int)minMaxBullets.x, (int)minMaxBullets.y);
+            //This uses linq to get the first object with the tag "BulletSpawnPoint" and gets its position in child objects.
+            //the other function was not working. Linq is helpful
             for (var i = 0; i < bullets; i++)
             {
-                GameObject bulletOBJ = Instantiate(bulletPrefab, this.transform.position, Quaternion.identity);
-                Vector3 dir = CurrentTarget.transform.position -
-                              gameObject.GetComponentsInChildren<Transform>().Where(r => r.tag == "BulletSpawnPoint")
-                                  .ToArray()[0].position
-                              + new Vector3(Random.Range(0, MaxSpread.x), 
-                                  Random.Range(0f, MaxSpread.y),
-                                  Random.Range(0f, MaxSpread.z));
-                bulletOBJ.transform.forward = dir.normalized;
-                bulletOBJ.GetComponent<Rigidbody>().AddForce(dir.normalized * bulletSpeed, ForceMode.Impulse);
+                if (Physics.Raycast(
+                        bulletSpawnPoint.position,
+                        CalculateFireDir(), out var hit))
+                {
+                    TrailRenderer trail = Instantiate(bulletTrail, bulletSpawnPoint.position, Quaternion.identity);
+                    StartCoroutine(SpawnTrail(trail, hit));
+                }
             }
+
+            Ammo -= bullets;
             yield return new WaitForSeconds(shootDelay);
+
         }
-        isShooting = false;
     }
-    private void Brain(GlobalVars.TargetType currentType)
+
+    private IEnumerator SpawnTrail(TrailRenderer trail, RaycastHit hit)
     {
-        
+        float time = 0;
+        Vector3 start = trail.transform.position;
+        while (time < 1)
+        {
+            trail.transform.position = Vector3.Lerp(start, hit.point, time);
+            time += Time.deltaTime + trail.time;
+            yield return null;
+        }
+
+        trail.transform.position = hit.point;
+        Instantiate(impactParticles, hit.point, Quaternion.LookRotation(hit.normal));
+        Destroy(trail.gameObject, trail.time);
     }
+   
     public void SetTarget(GameObject target)
     {
         try{
             CurrentTargetType = target.GetComponent<Accessibleproperties>().TargetType;
             CurrentTarget = target;
+            Bobber.Stop();
+            SelectedInicator.enabled = false;
         }
         catch{
             Debug.LogError($"Target {target.name} does not have AccessibleProperties TargetType, defualting.");
