@@ -139,6 +139,8 @@ public class HenchmenController : MonoBehaviour
             yield return new WaitForSeconds(shootDelay);
 
         }
+        yield return new WaitForSeconds(reloadDelay); 
+        isShooting= false;
     }
 
     private IEnumerator SpawnTrail(TrailRenderer trail, RaycastHit hit)
