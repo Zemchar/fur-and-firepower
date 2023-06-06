@@ -21,6 +21,8 @@ public class BossPlayerController : MonoBehaviour
     public GlobalVars.TeamAlignment teamAlignment;
     private List<GameObject> SelectedUnits = new List<GameObject>();
     [SerializeField] private HenchmenDirector henchmenDirector;
+    [SerializeField] private LayerMask henchmenLayer;
+
     private void Start()
     {
         kb = Keyboard.current;
@@ -73,7 +75,7 @@ public class BossPlayerController : MonoBehaviour
         Debug.Log($"MouseDown at {ms.position.ReadValue()}");
         RaycastHit hit;
         Ray target = Camera.main.ScreenPointToRay(ms.position.ReadValue());
-        Physics.Raycast(target, out hit);
+        Physics.Raycast(target,out hit, Mathf.Infinity, henchmenLayer);
         Debug.Log($"Hit {hit.collider.name}");
         return hit;
     }
