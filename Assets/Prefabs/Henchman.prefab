@@ -219,11 +219,13 @@ MonoBehaviour:
   teamAlignment: 0
   Owner: {fileID: 0}
   maxAmmo: 50
+  shootDelay: 3
   minMaxBullets: {x: 1, y: 3}
-  bulletPrefab: {fileID: 2236732899997573981, guid: 05a7f3b2ffb0bacee803b18d0e406f7a,
+  MaxSpread: {x: 0.1, y: 0.1, z: 0.1}
+  bulletSpawnPoint: {fileID: 4198588045343243791}
+  bulletTrail: {fileID: 7455253140147362857, guid: 275f2ffa03b5ababcb58185dca1e7433,
     type: 3}
-  MaxSpread: {x: 0, y: 0, z: 0}
-  bulletSpeed: 1000
+  impactParticles: {fileID: 0}
   SelectedInicator: {fileID: 7331154975346931814}
   Bobber: {fileID: 1476944873302872523}
 --- !u!195 &7108836126035215963
@@ -259,7 +261,7 @@ GameObject:
   - component: {fileID: 4198588045343243791}
   m_Layer: 3
   m_Name: BulletSpawnPoint
-  m_TagString: Untagged
+  m_TagString: BulletSpawnPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
