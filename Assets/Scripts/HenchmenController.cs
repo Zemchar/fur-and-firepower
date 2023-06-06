@@ -35,6 +35,7 @@ public class HenchmenController : MonoBehaviour
     [Header("Bullet Properties")]
     [SerializeField] int maxAmmo = 50;
     [SerializeField] float shootDelay;
+    [SerializeField] float reloadDelay;
     [Tooltip("X is Min, Y is Max. Controls how many bullets are fired at once.")]
     [SerializeField] Vector2 minMaxBullets = new Vector2(1, 3);
     [SerializeField] private Vector3 MaxSpread;
@@ -152,7 +153,7 @@ public class HenchmenController : MonoBehaviour
         }
 
         trail.transform.position = hit.point;
-        Instantiate(impactParticles, hit.point, Quaternion.LookRotation(hit.normal));
+        Instantiate(impactParticles, hit.point, Quaternion.LookRotation(hit.normal)); //TODO: Add particle effect
         Destroy(trail.gameObject, trail.time);
     }
    
