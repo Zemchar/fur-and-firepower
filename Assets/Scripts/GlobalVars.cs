@@ -25,10 +25,12 @@ public class GlobalVars : ScriptableObject
 
 }
 
-public static class Print
+public static class Utils
 {
     public static void print(string message)
     {
         Debug.Log(message);
     }
+    
 }
+

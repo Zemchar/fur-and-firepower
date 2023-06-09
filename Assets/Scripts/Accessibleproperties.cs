@@ -6,4 +6,5 @@ public class Accessibleproperties : MonoBehaviour
 {
     public GlobalVars.TeamAlignment TeamAlignment;
     public GlobalVars.TargetType TargetType;
+    public Collider GaurdianArea;
 }

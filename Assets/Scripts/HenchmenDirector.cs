@@ -29,14 +29,11 @@ public class HenchmenDirector : MonoBehaviour
         foreach (var henchmen in targets)
         {
             Debug.Log("Redirecting " + henchmen.Key.name + " to " + henchmen.Value.name);
-                // if (henchmen.Key.gameObject.GetComponent<Accessibleproperties>().TeamAlignment != requester.GetComponent<Accessibleproperties>().TeamAlignment)
-                // {
-                //     Debug.Log("Henchmen " + henchmen.Key.name + " is not on the same team as " + requester.gameObject.name + "and cannot be redirected.");
-                //     continue;
-                // } Likely not needed as this is checked in the HenchmenController
             //loops thru dictionary and sets all henchmen to their targets
             henchmen.Key.SendMessage("SetTarget", henchmen.Value);
             Debug.Log("Redirected " + henchmen.Key.name + " to " + henchmen.Value.name);
         }
+        
+        
     }
 }
