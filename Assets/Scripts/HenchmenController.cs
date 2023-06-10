@@ -54,15 +54,6 @@ public class HenchmenController : MonoBehaviour
     [SerializeField] private BoxCollider TooCloseCollider;
     private bool isGuarding = false;
 
-    private void OnDrawGizmosSelected()
-    {
-
-        Gizmos.color = Color.blue;
-        Gizmos.DrawLine(transform.position, CurrentTarget.transform.position);
-        Handles.Label(transform.position + (transform.position - CurrentTarget.transform.position) / 2,
-            "Distance to Target: " + Vector3.Distance(transform.position, CurrentTarget.transform.position));
-    }
-
     // Start is called before the first frame update
     void Start()
     {
@@ -94,7 +85,7 @@ public class HenchmenController : MonoBehaviour
                     {
                         Debug.DrawLine(gameObject.transform.position, CurrentTarget.transform.position, Color.green);
                         agent.ResetPath();
-                        henchmenState = targetType == GlobalVars.TargetType.Enemy ? HenchmenState.Attacking : HenchmenState.Guarding;
+                        henchmenState = targetType == GlobalVars.TargetType.Henchman ? HenchmenState.Attacking : HenchmenState.Guarding;
                     }
                     break;
                 default:
@@ -118,12 +109,12 @@ public class HenchmenController : MonoBehaviour
                     henchmenState = HenchmenState.Guarding;
                     CurrentTarget = Owner; // Guard the owner
                     break;
-                case GlobalVars.TargetType.Enemy: // Basic enemy type. Other henchmen and bosses. Most flexible.
+                case GlobalVars.TargetType.Henchman: // Basic enemy type. Other henchmen and bosses. Most flexible.
                     agent.SetDestination(CurrentTarget.transform.position);
                     Debug.DrawLine(gameObject.transform.position, CurrentTarget.transform.position, Color.blue);
                     //check if target is in range
                     TooCloseCollider.enabled = false; // too close collider is disabled so that the henchmen can get close enough to attack and not get distracted
-                    CheckAttack(GlobalVars.TargetType.Enemy);
+                    CheckAttack(GlobalVars.TargetType.Henchman);
                     break;
                 case GlobalVars.TargetType.Structure_Shop:
                     agent.SetDestination(CurrentTarget.transform.position);
@@ -188,10 +179,10 @@ public class HenchmenController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.GetComponent<Accessibleproperties>().TeamAlignment != teamAlignment && other.gameObject.GetComponent<Accessibleproperties>().TargetType == GlobalVars.TargetType.Enemy)
+        if (other.gameObject.GetComponent<Accessibleproperties>().TeamAlignment != teamAlignment && other.gameObject.GetComponent<Accessibleproperties>().TargetType == GlobalVars.TargetType.Henchman)
         {
             CurrentTarget = other.gameObject;
-            CurrentTargetType = GlobalVars.TargetType.Enemy;
+            CurrentTargetType = GlobalVars.TargetType.Henchman;
             henchmenState = HenchmenState.Moving;
         }
     }

@@ -11,17 +11,13 @@ public class GridSpawner : MonoBehaviour
     private int tileWidth = 60; //size of each grid tile
     private GameObject[,] grid;
 
-
     private class Piece
     {
         public GameObject piece { get; set; }
         public Quaternion rotation { get; set; }
     }
 
-    private Dictionary<string, Piece> pieces = new Dictionary<string, Piece>(); //keeps track of all 17 version of pieces
-
-
-
+    private Dictionary<string, Piece> pieces = new Dictionary<string, Piece>(); //keeps track of all 16 version of pieces
 
     private void Start()
     {
