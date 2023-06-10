@@ -37,7 +37,10 @@ public class HenchmenController : MonoBehaviour
     private NavMeshAgent agent;
     private int Ammo = 50;
     private bool isShooting = false;
+    [FormerlySerializedAs("damage")]
     [Header("Bullet Properties")]
+    [SerializeField] private float baseDamage;
+
     [SerializeField] int maxAmmo = 50;
     [SerializeField] float shootDelay;
     [SerializeField] float reloadDelay;
@@ -213,7 +216,6 @@ public class HenchmenController : MonoBehaviour
         {
             yield break; // dont shoot if already shooting
         }
-
         isShooting = true;
         while (Ammo > 0)
         {
@@ -227,6 +229,10 @@ public class HenchmenController : MonoBehaviour
                         bulletSpawnPoint.position,
                         CalculateFireDir(), out var hit))
                 {
+                    if (hit.collider.gameObject.GetComponentInParent<Accessibleproperties>().TeamAlignment != teamAlignment)
+                    {
+                        hit.collider.gameObject.SendMessage("InflictDamage", CalcDamage(baseDamage));
+                    }
                     TrailRenderer trail = Instantiate(bulletTrail, bulletSpawnPoint.position, Quaternion.identity);
                     StartCoroutine(SpawnTrail(trail, hit));
                 }
@@ -297,5 +303,9 @@ public class HenchmenController : MonoBehaviour
         NavMeshHit navHit;
         NavMesh.SamplePosition (randomDirection, out navHit, distance, layermask);
         return navHit.position;
+    }
+    public float CalcDamage(float damage, float damageModifier = 1)
+    {
+        return damage * damageModifier;
     }
 }
