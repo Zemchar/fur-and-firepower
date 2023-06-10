@@ -16,6 +16,7 @@ public class GlobalVars : ScriptableObject
     {
         None,
         Henchman,
+        Boss_OR_Capo,
         Structure_Shop,
         Structure_CapoHome,
         Structure_ShopFriendly,
