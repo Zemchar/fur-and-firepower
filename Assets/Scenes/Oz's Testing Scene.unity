@@ -691,7 +691,7 @@ MonoBehaviour:
   - {fileID: 3027720742302425261, guid: 68a2e2bae67a8564c982aa38b303e897, type: 3}
   - {fileID: 977847298522721838, guid: e35c88100d2fd764a822fbb4c1052058, type: 3}
   - {fileID: 4897179080636805606, guid: 29c4fbd082f9e96418f0437a95738e72, type: 3}
-  gridSize: 15
+  gridSize: 50
 --- !u!1 &1717826593
 GameObject:
   m_ObjectHideFlags: 0
