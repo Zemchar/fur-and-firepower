@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Rendering;
@@ -13,19 +14,24 @@ public class HenchmenController : MonoBehaviour
     public enum HenchmenState
     {
         None,
-        Idle,
+        Guarding,
         Moving,
         Attacking,
         Dead
     }
     
-    private GlobalVars.TargetType defaultAction = GlobalVars.TargetType.None;
     private GameObject CurrentTarget;
     private GlobalVars.TargetType CurrentTargetType;
+    [SerializeField] private int DAYNUMBER = 1;
+    [FormerlySerializedAs("defaultAction")]
     [Header("Behavior Properties")]
-    [Tooltip("Controls the distance until the henchmen will start attacking.")] [SerializeField]
-    private Vector3 min_TargetDistance; // When will the henchmen start attacking
+    [Tooltip("Controls what the henchmen will default to when selecting an invalid target.")]
+    [SerializeField] GlobalVars.TargetType defaultTargetType = GlobalVars.TargetType.None;
+    [Tooltip("Controls the distance until the henchmen will start attacking.")]
+    [SerializeField] private Vector3 min_TargetDistance; // When will the henchmen start attacking
+    [SerializeField] private float LookAroundTime;
     public HenchmenState henchmenState;
+    public float health = 100;
     public GlobalVars.TeamAlignment teamAlignment;
     public GameObject Owner;
     
@@ -45,7 +51,17 @@ public class HenchmenController : MonoBehaviour
     [SerializeField] private ParticleSystem impactParticles;
     [SerializeField] private Canvas SelectedInicator;
     [SerializeField] private Animation Bobber;
-    
+    [SerializeField] private BoxCollider TooCloseCollider;
+    private bool isGuarding = false;
+
+    private void OnDrawGizmosSelected()
+    {
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(transform.position, CurrentTarget.transform.position);
+        Handles.Label(transform.position + (transform.position - CurrentTarget.transform.position) / 2,
+            "Distance to Target: " + Vector3.Distance(transform.position, CurrentTarget.transform.position));
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -53,24 +69,17 @@ public class HenchmenController : MonoBehaviour
         agent = this.gameObject.GetComponent<NavMeshAgent>();
         SelectedInicator.enabled = false;
         Ammo = maxAmmo;
+        TooCloseCollider.enabled = false;
+        isGuarding = false;
     }
     // Update is called once per frame
     void Update()
     {
-        if (henchmenState == HenchmenState.None)
+        void CheckAttack(GlobalVars.TargetType targetType)
         {
-            switch (CurrentTargetType)
+            switch (DAYNUMBER)
             {
-                case GlobalVars.TargetType.None:
-                    /*This one is going to be the hardest to implement, so I'm leaving it for last.\\
-                     * It will be used for things like protecting the player, or just standing around.\\
-                     */
-                    // throw new NotImplementedException();
-                    break;
-                case GlobalVars.TargetType.Enemy:
-                    agent.SetDestination(CurrentTarget.transform.position);
-                    Debug.DrawLine(gameObject.transform.position, CurrentTarget.transform.position, Color.blue);
-                    //check if target is in range
+                case 1:
                     if (Vector3.Distance(this.transform.position, CurrentTarget.transform.position) <=
                         min_TargetDistance.magnitude)
                     {
@@ -78,7 +87,54 @@ public class HenchmenController : MonoBehaviour
                         agent.ResetPath();
                         henchmenState = HenchmenState.Attacking;
                     }
-
+                    break;
+                case 2:
+                    if (Vector3.Distance(this.transform.position, CurrentTarget.transform.position) <=
+                        min_TargetDistance.magnitude)
+                    {
+                        Debug.DrawLine(gameObject.transform.position, CurrentTarget.transform.position, Color.green);
+                        agent.ResetPath();
+                        henchmenState = targetType == GlobalVars.TargetType.Enemy ? HenchmenState.Attacking : HenchmenState.Guarding;
+                    }
+                    break;
+                default:
+                    if (Vector3.Distance(this.transform.position, CurrentTarget.transform.position) <=
+                        min_TargetDistance.magnitude)
+                    {
+                        Debug.DrawLine(gameObject.transform.position, CurrentTarget.transform.position, Color.green);
+                        agent.ResetPath();
+                        henchmenState = HenchmenState.Attacking;
+                    }
+                    break;
+            }
+            
+        }
+        if (henchmenState == HenchmenState.None)
+        {
+            switch (CurrentTargetType)
+            {
+                case GlobalVars.TargetType.None:
+                    TooCloseCollider.enabled = true;
+                    henchmenState = HenchmenState.Guarding;
+                    CurrentTarget = Owner; // Guard the owner
+                    break;
+                case GlobalVars.TargetType.Enemy: // Basic enemy type. Other henchmen and bosses. Most flexible.
+                    agent.SetDestination(CurrentTarget.transform.position);
+                    Debug.DrawLine(gameObject.transform.position, CurrentTarget.transform.position, Color.blue);
+                    //check if target is in range
+                    TooCloseCollider.enabled = false; // too close collider is disabled so that the henchmen can get close enough to attack and not get distracted
+                    CheckAttack(GlobalVars.TargetType.Enemy);
+                    break;
+                case GlobalVars.TargetType.Structure_Shop:
+                    agent.SetDestination(CurrentTarget.transform.position);
+                    Debug.DrawLine(gameObject.transform.position, CurrentTarget.transform.position, Color.red);
+                    TooCloseCollider.enabled = true; // too close collider enabled so they can find new targets. 
+                    CheckAttack(GlobalVars.TargetType.Structure_Shop);
+                    break;
+                default:
+                    TooCloseCollider.enabled = true;
+                    henchmenState = HenchmenState.Guarding;
+                    CurrentTarget = Owner; // Guard the owner
                     break;
             }
         }
@@ -96,10 +152,50 @@ public class HenchmenController : MonoBehaviour
                     else if(!isShooting)
                         StartCoroutine(Shoot());
                     break;
+                case HenchmenState.Guarding:
+                    if(!isGuarding){ 
+                        Collider guardianArea = CurrentTarget.GetComponent<Accessibleproperties>().GaurdianArea;
+                        StartCoroutine(GuardWithinArea(guardianArea));
+                    }
+                    break;
             }
         }
     }
-    
+
+    private IEnumerator GuardWithinArea(Collider gaurdianArea)
+    {
+        isGuarding = true;
+        Vector3 TargetPos = RandomNavSphere(gaurdianArea.transform.position, 1, -1);
+        /* Sometimes the TargetPos is infinity. I Have no clue why.
+         * If infinity is passed to the agent, it will break the agent permanently.
+         * This is a temporary fix. */
+        if (TargetPos.magnitude == Mathf.Infinity || TargetPos.magnitude == Mathf.NegativeInfinity)
+        {
+            print("TargetPos is infinity");
+            isGuarding = false;
+            yield break; //Retry 
+        }
+        agent.SetDestination(TargetPos);
+        while(Vector3.Distance(transform.position, TargetPos) > 1)
+        {
+            Debug.DrawLine(transform.position, TargetPos, Color.yellow);
+            yield return null;
+        }
+        yield return new WaitForSeconds(LookAroundTime);
+        isGuarding = false;
+        yield break;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.GetComponent<Accessibleproperties>().TeamAlignment != teamAlignment && other.gameObject.GetComponent<Accessibleproperties>().TargetType == GlobalVars.TargetType.Enemy)
+        {
+            CurrentTarget = other.gameObject;
+            CurrentTargetType = GlobalVars.TargetType.Enemy;
+            henchmenState = HenchmenState.Moving;
+        }
+    }
+
     private Vector3 CalculateFireDir()
     {
         Vector3 dir = transform.forward;
@@ -139,6 +235,10 @@ public class HenchmenController : MonoBehaviour
             yield return new WaitForSeconds(shootDelay);
 
         }
+        yield return new WaitForSeconds(reloadDelay);
+        Ammo = maxAmmo;
+        isShooting = false;
+        yield break; // stop the coroutine
     }
 
     private IEnumerator SpawnTrail(TrailRenderer trail, RaycastHit hit)
@@ -159,15 +259,23 @@ public class HenchmenController : MonoBehaviour
    
     public void SetTarget(GameObject target)
     {
+        StopCoroutine(Shoot());
+        StopCoroutine(GuardWithinArea(null));
         try{
             CurrentTargetType = target.GetComponent<Accessibleproperties>().TargetType;
+            henchmenState = HenchmenState.None; // Required to redirect
             CurrentTarget = target;
             Bobber.Stop();
             SelectedInicator.enabled = false;
+            print("Current Target Set with Type: " + CurrentTargetType);
         }
         catch{
             Debug.LogError($"Target {target.name} does not have AccessibleProperties TargetType, defualting.");
-            CurrentTargetType = defaultAction; 
+            henchmenState = HenchmenState.None; // Required to redirect
+            CurrentTargetType = defaultTargetType;
+            CurrentTarget = null;
+            Bobber.Stop();
+            SelectedInicator.enabled = false;
         } }
 
     public void RequestSelect(GameObject requester)
@@ -182,5 +290,13 @@ public class HenchmenController : MonoBehaviour
         //If not true, do not return confirmation message
 
     }
+    public static Vector3 RandomNavSphere (Vector3 origin, float distance, int layermask) {
+        Vector3 randomDirection = UnityEngine.Random.insideUnitSphere * distance;
+        randomDirection += origin;
+        NavMeshHit navHit;
+        NavMesh.SamplePosition (randomDirection, out navHit, distance, layermask);
+        return navHit.position;
+    }
+
 
 }

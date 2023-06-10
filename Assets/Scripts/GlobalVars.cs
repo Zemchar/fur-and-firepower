@@ -22,13 +22,15 @@ public class GlobalVars : ScriptableObject
         Structure_CapoHomeFriendly,
         Structure_PoliceStation,
     }
-    
+
 }
 
-public static class Print
+public static class Utils
 {
     public static void print(string message)
     {
         Debug.Log(message);
     }
+    
 }
+

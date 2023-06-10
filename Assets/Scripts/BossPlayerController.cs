@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
@@ -21,6 +22,16 @@ public class BossPlayerController : MonoBehaviour
     public GlobalVars.TeamAlignment teamAlignment;
     private List<GameObject> SelectedUnits = new List<GameObject>();
     [SerializeField] private HenchmenDirector henchmenDirector;
+    [SerializeField] private LayerMask henchmenLayer;
+
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(GetComponentInChildren<SphereCollider>().bounds.center, GetComponentInChildren<SphereCollider>().bounds.size);
+        Handles.Label(GetComponentInChildren<SphereCollider>().bounds.max, "Gaurdian Area");
+        
+    }
     private void Start()
     {
         kb = Keyboard.current;
@@ -53,16 +64,17 @@ public class BossPlayerController : MonoBehaviour
         {
             Debug.Log("Right Clicked");
             var hit = ClickCastRay();
-            var tempDict = new Dictionary<GameObject, GameObject>();
+            var tempDict = new Dictionary<GameObject, GameObject>(); 
             foreach(var unit in SelectedUnits)
             {
                 tempDict.Add(unit, hit.collider.gameObject);
             }
 
-            object[] tempArray = new object[2];
+            object[] tempArray = new object[2]; //doing this is required because of how send message works
             tempArray[0] = tempDict;
             tempArray[1] = this.gameObject;
-            henchmenDirector.SendMessage("RedirectHenchmen", tempArray);
+            henchmenDirector.SendMessage("RedirectHenchmen", tempArray); // Player ==> Henchmen group parent
+            SelectedUnits.Clear(); // reset dict so more entities can be selected
         }
         Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
         rb.velocity = Vector3.ClampMagnitude(move * (speedMultiplier * Time.deltaTime), maxSpeed);
@@ -73,7 +85,7 @@ public class BossPlayerController : MonoBehaviour
         Debug.Log($"MouseDown at {ms.position.ReadValue()}");
         RaycastHit hit;
         Ray target = Camera.main.ScreenPointToRay(ms.position.ReadValue());
-        Physics.Raycast(target, out hit);
+        Physics.Raycast(target,out hit, Mathf.Infinity, henchmenLayer);
         Debug.Log($"Hit {hit.collider.name}");
         return hit;
     }
