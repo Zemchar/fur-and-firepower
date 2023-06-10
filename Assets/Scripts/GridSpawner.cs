@@ -11,17 +11,13 @@ public class GridSpawner : MonoBehaviour
     private int tileWidth = 60; //size of each grid tile
     private GameObject[,] grid;
 
-    private enum PieceRotation
-    {
-        None,
-    }
     private class Piece
     {
         public GameObject piece { get; set; }
-        public PieceRotation rotation { get; set; }
+        public Quaternion rotation { get; set; }
     }
 
-    private Dictionary<string, GameObject> pieces = new Dictionary<string, GameObject>(); //keeps track of all 17 version of pieces
+    private Dictionary<string, Piece> pieces = new Dictionary<string, Piece>(); //keeps track of all 16 version of pieces
 
     private void Start()
     {
@@ -45,18 +41,16 @@ public class GridSpawner : MonoBehaviour
                 if (row == 0 || col == 0 || row == gridSize - 1 || col == gridSize - 1) //coordinates of the border of the grid
                 {
                     if (row == gridSize / 2 && col == 0)
-                        temp = Instantiate(pieces["deadend-right"], new Vector3(x, 0, y), pieces["deadend-right"].transform.rotation); //left-most piece
+                        temp = Instantiate(pieces["deadend-right"].piece, new Vector3(x, 0, y), pieces["deadend-right"].rotation, this.transform.Find("Border").transform); //left-most piece
                     else if (row == gridSize / 2 && col == gridSize - 1)
-                        temp = Instantiate(pieces["deadend-left"], new Vector3(x, 0, y), pieces["deadend-left"].transform.rotation); //right-most piece
+                        temp = Instantiate(pieces["deadend-left"].piece, new Vector3(x, 0, y), pieces["deadend-left"].rotation, this.transform.Find("Border").transform); //right-most piece
                     else if (col == gridSize / 2 && row == 0)
-                        temp = Instantiate(pieces["deadend-up"], new Vector3(x, 0, y), pieces["deadend-up"].transform.rotation); //bottom-most piece
+                        temp = Instantiate(pieces["deadend-up"].piece, new Vector3(x, 0, y), pieces["deadend-up"].rotation, this.transform.Find("Border").transform); //bottom-most piece
                     else if (col == gridSize / 2 && row == gridSize - 1)
-                        temp = Instantiate(pieces["deadend-down"], new Vector3(x, 0, y), pieces["deadend-down"].transform.rotation); //top-most piece
+                        temp = Instantiate(pieces["deadend-down"].piece, new Vector3(x, 0, y), pieces["deadend-down"].rotation, this.transform.Find("Border").transform); //top-most piece
                     else
-                        temp = Instantiate(roadPiece[1], new Vector3(x, 0, y), roadPiece[1].transform.rotation);
+                        temp = Instantiate(pieces["border"].piece, new Vector3(x, 0, y), pieces["border"].rotation, this.transform.Find("Border").transform);
 
-
-                    temp.transform.SetParent(this.transform.Find("Border").transform);
                     grid[row, col] = temp;
                 }
             }
@@ -97,8 +91,7 @@ public class GridSpawner : MonoBehaviour
         int y = tileWidth * (col - gridSize / 2);
 
         string tempPiece = PieceChecker(x, y);
-        GameObject temp = Instantiate(pieces[tempPiece], new Vector3(x, 0, y), pieces[tempPiece].transform.rotation);
-        temp.transform.SetParent(this.transform);
+        GameObject temp = Instantiate(pieces[tempPiece].piece, new Vector3(x, 0, y), pieces[tempPiece].rotation, this.transform);
         grid[row, col] = temp;
 
         int rand = Random.Range(1, 4);
@@ -258,92 +251,87 @@ public class GridSpawner : MonoBehaviour
             return possiblePieces[Random.Range(0, possiblePieces.Count - 1)];
     }
 
-    private void FillDictionary() //fills the dictionary "pieces" with all 17 possible piece types/rotations
+    private void FillDictionary() //fills the dictionary "pieces" with all 16 possible piece types/rotations
     {
-        GameObject temp = Instantiate(roadPiece[0]);
-        temp.transform.rotation = Quaternion.Euler(0, 0, 0);
-        pieces.Add("empty", temp); //empty piece
-        Destroy(temp);  
-
-        temp = Instantiate(roadPiece[1]);
-        temp.transform.rotation = Quaternion.Euler(0, 0, 0);
+        Piece temp = new Piece();
+        temp.piece = roadPiece[0];
+        temp.rotation = Quaternion.Euler(0, 0, 0);
         pieces.Add("border", temp); //border piece
-        Destroy(temp);
 
-        temp = Instantiate(roadPiece[2]);
-        temp.transform.rotation = Quaternion.Euler(0, 0, 0);
+        temp = new Piece();
+        temp.piece = roadPiece[1];
+        temp.rotation = Quaternion.Euler(0, 0, 0);
         pieces.Add("deadend-down", temp); //deadend piece with road side facing down
-        Destroy(temp);
 
-        temp = Instantiate(roadPiece[2]);
-        temp.transform.rotation = Quaternion.Euler(0, 90, 0);
+        temp = new Piece();
+        temp.piece = roadPiece[1];
+        temp.rotation = Quaternion.Euler(0, 90, 0);
         pieces.Add("deadend-left", temp); //deadend piece with road side facing left
-        Destroy(temp);
 
-        temp = Instantiate(roadPiece[2]);
-        temp.transform.rotation = Quaternion.Euler(0, 180, 0);
+        temp = new Piece();
+        temp.piece = roadPiece[1];
+        temp.rotation = Quaternion.Euler(0, 180, 0);
         pieces.Add("deadend-up", temp); //deadend piece with road side facing up
-        Destroy(temp);
 
-        temp = Instantiate(roadPiece[2]);
-        temp.transform.rotation = Quaternion.Euler(0, 270, 0);
+        temp = new Piece();
+        temp.piece = roadPiece[1];
+        temp.rotation = Quaternion.Euler(0, 270, 0);
         pieces.Add("deadend-right", temp); //deadend piece with road side facing right
-        Destroy(temp);
 
-        temp = Instantiate(roadPiece[3]);
-        temp.transform.rotation = Quaternion.Euler(0, 0, 0);
+        temp = new Piece();
+        temp.piece = roadPiece[2];
+        temp.rotation = Quaternion.Euler(0, 0, 0);
         pieces.Add("straight-vertical", temp); //straight piece with road sides going vertical
-        Destroy(temp);
 
-        temp = Instantiate(roadPiece[3]);
-        temp.transform.rotation = Quaternion.Euler(0, 90, 0);
+        temp = new Piece();
+        temp.piece = roadPiece[2];
+        temp.rotation = Quaternion.Euler(0, 90, 0);
         pieces.Add("straight-horizontal", temp); //straight piece with road sides going horizontal
-        Destroy(temp);
 
-        temp = Instantiate(roadPiece[4]);
-        temp.transform.rotation = Quaternion.Euler(0, 0, 0);
+        temp = new Piece();
+        temp.piece = roadPiece[3];
+        temp.rotation = Quaternion.Euler(0, 0, 0);
         pieces.Add("L-down", temp); //L piece with the bottom of the L facing down
-        Destroy(temp);
 
-        temp = Instantiate(roadPiece[4]);
-        temp.transform.rotation = Quaternion.Euler(0, 90, 0);
+        temp = new Piece();
+        temp.piece = roadPiece[3];
+        temp.rotation = Quaternion.Euler(0, 90, 0);
         pieces.Add("L-left", temp); //L piece with the bottom of the L facing left
-        Destroy(temp);
 
-        temp = Instantiate(roadPiece[4]);
-        temp.transform.rotation = Quaternion.Euler(0, 180, 0);
+        temp = new Piece();
+        temp.piece = roadPiece[3];
+        temp.rotation = Quaternion.Euler(0, 180, 0);
         pieces.Add("L-up", temp); //L piece with the bottom of the L facing up
-        Destroy(temp);
 
-        temp = Instantiate(roadPiece[4]);
-        temp.transform.rotation = Quaternion.Euler(0, 270, 0);
+        temp = new Piece();
+        temp.piece = roadPiece[3];
+        temp.rotation = Quaternion.Euler(0, 270, 0);
         pieces.Add("L-right", temp); //L piece with the bottom of the L facing right
-        Destroy(temp);
 
-        temp = Instantiate(roadPiece[5]);
-        temp.transform.rotation = Quaternion.Euler(0, 0, 0);
+        temp = new Piece();
+        temp.piece = roadPiece[4];
+        temp.rotation = Quaternion.Euler(0, 0, 0);
         pieces.Add("T-down", temp); //T piece with the bottom of the T facing down
-        Destroy(temp);
 
-        temp = Instantiate(roadPiece[5]);
-        temp.transform.rotation = Quaternion.Euler(0, 90, 0);
+        temp = new Piece();
+        temp.piece = roadPiece[4];
+        temp.rotation = Quaternion.Euler(0, 90, 0);
         pieces.Add("T-left", temp); //T piece with the bottom of the T facing left
-        Destroy(temp);
 
-        temp = Instantiate(roadPiece[5]);
-        temp.transform.rotation = Quaternion.Euler(0, 180, 0);
+        temp = new Piece();
+        temp.piece = roadPiece[4];
+        temp.rotation = Quaternion.Euler(0, 180, 0);
         pieces.Add("T-up", temp); //T piece with the bottom of the T facing up
-        Destroy(temp);
 
-        temp = Instantiate(roadPiece[5]);
-        temp.transform.rotation = Quaternion.Euler(0, 270, 0);
+        temp = new Piece();
+        temp.piece = roadPiece[4];
+        temp.rotation = Quaternion.Euler(0, 270, 0);
         pieces.Add("T-right", temp); //T piece with the bottom of the T facing right
-        Destroy(temp);
 
-        temp = Instantiate(roadPiece[6]);
-        temp.transform.rotation = Quaternion.Euler(0, 0, 0);
+        temp = new Piece();
+        temp.piece = roadPiece[5];
+        temp.rotation = Quaternion.Euler(0, 0, 0);
         pieces.Add("cross", temp); //cross piece
-        Destroy(temp);
 
     }
 
