@@ -34,7 +34,6 @@ public class HenchmenController : MonoBehaviour
     public float health = 100;
     public GlobalVars.TeamAlignment teamAlignment;
     public GameObject Owner;
-    
     private NavMeshAgent agent;
     private int Ammo = 50;
     private bool isShooting = false;
@@ -119,8 +118,15 @@ public class HenchmenController : MonoBehaviour
                 case GlobalVars.TargetType.Structure_Shop:
                     agent.SetDestination(CurrentTarget.transform.position);
                     Debug.DrawLine(gameObject.transform.position, CurrentTarget.transform.position, Color.red);
-                    TooCloseCollider.enabled = true; // too close collider enabled so they can find new targets. 
+                    TooCloseCollider.enabled = false; // too close collider enabled so they can find new targets. 
                     CheckAttack(GlobalVars.TargetType.Structure_Shop);
+                    break;
+                case GlobalVars.TargetType.Boss_OR_Capo: // currently will do the same thing as Henchman type. Its here so that we can change behavior later.
+                    agent.SetDestination(CurrentTarget.transform.position);
+                    Debug.DrawLine(gameObject.transform.position, CurrentTarget.transform.position, Color.blue);
+                    //check if target is in range
+                    TooCloseCollider.enabled = false; // too close collider is disabled so that the henchmen can get close enough to attack and not get distracted
+                    CheckAttack(GlobalVars.TargetType.Henchman);
                     break;
                 default:
                     TooCloseCollider.enabled = true;
@@ -179,16 +185,21 @@ public class HenchmenController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.GetComponent<Accessibleproperties>().TeamAlignment != teamAlignment && other.gameObject.GetComponent<Accessibleproperties>().TargetType == GlobalVars.TargetType.Henchman)
+        if (other.gameObject.GetComponentInParent<Accessibleproperties>().TeamAlignment != teamAlignment && 
+            (other.gameObject.GetComponentInParent<Accessibleproperties>().TargetType == GlobalVars.TargetType.Henchman || other.gameObject.GetComponentInParent<Accessibleproperties>().TargetType == GlobalVars.TargetType.Boss_OR_Capo))
         {
-            CurrentTarget = other.gameObject;
-            CurrentTargetType = GlobalVars.TargetType.Henchman;
-            henchmenState = HenchmenState.Moving;
+            SetTarget(other.gameObject.transform.parent.gameObject); // why is this so needlessly long.
+            //Either way, insures SetTarget can get accessible properties.
+        }
+        else
+        {
+            return;
         }
     }
 
     private Vector3 CalculateFireDir()
     {
+        transform.LookAt(CurrentTarget.transform);
         Vector3 dir = transform.forward;
         //add spread
         dir += new Vector3(Random.Range(-MaxSpread.x, MaxSpread.x), Random.Range(-MaxSpread.y, MaxSpread.y),
@@ -197,8 +208,7 @@ public class HenchmenController : MonoBehaviour
     }
 
     private IEnumerator Shoot()
-    {
-        print("Shooting");
+    { 
         if (isShooting)
         {
             yield break; // dont shoot if already shooting
@@ -250,15 +260,16 @@ public class HenchmenController : MonoBehaviour
    
     public void SetTarget(GameObject target)
     {
-        StopCoroutine(Shoot());
-        StopCoroutine(GuardWithinArea(null));
+        StopAllCoroutines();
+        isShooting = false;
+        isGuarding = false;
         try{
             CurrentTargetType = target.GetComponent<Accessibleproperties>().TargetType;
             henchmenState = HenchmenState.None; // Required to redirect
             CurrentTarget = target;
             Bobber.Stop();
             SelectedInicator.enabled = false;
-            print("Current Target Set with Type: " + CurrentTargetType);
+            print($"New Target Set ({target.name}) of type {CurrentTargetType}");
         }
         catch{
             Debug.LogError($"Target {target.name} does not have AccessibleProperties TargetType, defualting.");
@@ -279,7 +290,6 @@ public class HenchmenController : MonoBehaviour
             requester.SendMessage("Select", this.gameObject);
         }
         //If not true, do not return confirmation message
-
     }
     public static Vector3 RandomNavSphere (Vector3 origin, float distance, int layermask) {
         Vector3 randomDirection = UnityEngine.Random.insideUnitSphere * distance;
@@ -288,6 +298,4 @@ public class HenchmenController : MonoBehaviour
         NavMesh.SamplePosition (randomDirection, out navHit, distance, layermask);
         return navHit.position;
     }
-
-
 }
