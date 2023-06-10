@@ -15,7 +15,7 @@ public class GlobalVars : ScriptableObject
     public enum TargetType
     {
         None,
-        Enemy,
+        Henchman,
         Structure_Shop,
         Structure_CapoHome,
         Structure_ShopFriendly,

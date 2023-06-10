@@ -11,6 +11,16 @@ public class GridSpawner : MonoBehaviour
     private int tileWidth = 60; //size of each grid tile
     private GameObject[,] grid;
 
+    private enum PieceRotation
+    {
+        None,
+    }
+    private class Piece
+    {
+        public GameObject piece { get; set; }
+        public PieceRotation rotation { get; set; }
+    }
+
     private Dictionary<string, GameObject> pieces = new Dictionary<string, GameObject>(); //keeps track of all 17 version of pieces
 
     private void Start()
