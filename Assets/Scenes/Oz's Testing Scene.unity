@@ -685,7 +685,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   roadPiece:
-  - {fileID: 4001762907936066666, guid: 51dc936ca1968544cba7dd65e1494a36, type: 3}
   - {fileID: 4284881783251934289, guid: d4b2fea39dee6ae4ab69ce865cb2b09b, type: 3}
   - {fileID: 675034739931272496, guid: f0a4d0fbca6cd11409f3a6852dbbfc2f, type: 3}
   - {fileID: 7531591240611823186, guid: b8f36be2cfdfc784292e9df348e18fe1, type: 3}
