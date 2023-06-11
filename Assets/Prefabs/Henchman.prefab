@@ -113,6 +113,7 @@ GameObject:
   - component: {fileID: 4198588045314329067}
   - component: {fileID: 4198588045314329062}
   - component: {fileID: 7108836126035215963}
+  - component: {fileID: 6845298673638591649}
   m_Layer: 3
   m_Name: Henchman
   m_TagString: Henchman
@@ -165,11 +166,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DAYNUMBER: 1
+  defaultTargetType: 0
   min_TargetDistance: {x: 1, y: 1, z: 1}
+  LookAroundTime: 0
   henchmenState: 0
   health: 100
   teamAlignment: 0
   Owner: {fileID: 0}
+  baseDamage: 0
   maxAmmo: 50
   shootDelay: 3
   reloadDelay: 0
@@ -205,6 +209,25 @@ NavMeshAgent:
   m_BaseOffset: 0.5
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &6845298673638591649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4198588045314329065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &4198588045343243790
 GameObject:
   m_ObjectHideFlags: 0

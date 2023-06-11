@@ -8,6 +8,7 @@ TagManager:
   - Henchman
   - Wall
   - Road
+  - HenchmanDirector
   layers:
   - Default
   - TransparentFX

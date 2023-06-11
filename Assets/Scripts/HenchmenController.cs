@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
@@ -9,7 +10,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
-public class HenchmenController : MonoBehaviour
+public class HenchmenController : NetworkBehaviour
 {
     public enum HenchmenState
     {

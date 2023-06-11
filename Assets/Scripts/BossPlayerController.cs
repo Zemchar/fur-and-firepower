@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Cinemachine;
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -10,81 +12,101 @@ using UnityEngine.InputSystem.Utilities;
 using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 
-public class BossPlayerController : MonoBehaviour
+public class BossPlayerController : NetworkBehaviour
 {
     private Rigidbody rb;
-    
+
+    [SerializeField] private CinemachineFreeLook vc;
+    private Camera cam;
     [FormerlySerializedAs("speed")] [SerializeField] float speedMultiplier = 12f;
     [SerializeField] float maxSpeed = 5f;
     Vector2 moveInput;
-    private Keyboard kb;
-    private Mouse ms;
     public GlobalVars.TeamAlignment teamAlignment;
-    private List<GameObject> SelectedUnits = new List<GameObject>();
-    [SerializeField] private HenchmenDirector henchmenDirector;
+    private List<GameObject> SelectedUnits = new();
+    private HenchmenDirector henchmenDirector;
     [SerializeField] private LayerMask henchmenLayer;
 
 
     void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(GetComponentInChildren<SphereCollider>().bounds.center, GetComponentInChildren<SphereCollider>().bounds.size);
-        Handles.Label(GetComponentInChildren<SphereCollider>().bounds.max, "Gaurdian Area");
+        // Gizmos.color = Color.red; No Longer Needed
+        // Gizmos.DrawWireCube(GetComponentInChildren<SphereCollider>().bounds.center, GetComponentInChildren<SphereCollider>().bounds.size);
+        // Handles.Label(GetComponentInChildren<SphereCollider>().bounds.max, "Gaurdian Area");
         
     }
-    private void Start()
+
+
+
+    public override void OnNetworkSpawn()
     {
-        kb = Keyboard.current;
-        ms = Mouse.current;
-        // Cursor.lockState = CursorLockMode.Locked;
+
+        if(IsOwner)
+        {
+            cam.GetComponent<AudioListener>().enabled = true;
+            vc.m_Priority = 10;
+            print(Keyboard.current);
+            print(Mouse.current);
+        }
+        else
+        {
+            this.GetComponent<PlayerInput>().enabled = false;
+            vc.m_Priority = 0;
+        }
+    }
+
+    private void Awake()
+    {
+        cam = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
+        henchmenDirector = GameObject.FindWithTag("HenchmanDirector").GetComponent<HenchmenDirector>();
         rb = GetComponent<Rigidbody>();
-        Debug.Log(kb);
-        speedMultiplier *= 100;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (kb.escapeKey.wasPressedThisFrame)
+        Vector3 dir = new Vector3(moveInput.x, 0, moveInput.y).normalized;
+        if (IsOwner)
         {
-            Cursor.lockState = CursorLockMode.None;
-        }
-
-        if (ms.leftButton.wasPressedThisFrame) // TODO: Move these into own function tied to input system if game speed gets slow
-        {
-            var hit = ClickCastRay();
-            if (hit.collider.gameObject.CompareTag("Henchman") && !SelectedUnits.Contains(hit.collider.gameObject)) // dont select if already selected
+            rb.velocity = Vector3.ClampMagnitude(dir * (speedMultiplier * Time.deltaTime), maxSpeed);
+            if (Mouse.current.leftButton.wasPressedThisFrame) // I DONT KNOW WHY but with networking you cannot assign mouse.current to a variable
             {
-                Debug.Log($"Hit {hit.collider.name}");
-                hit.collider.gameObject.SendMessage("RequestSelect", this.gameObject); // Select Henchmen
-            }
-        }
-
-        if (ms.rightButton.wasPressedThisFrame)
-        {
-            Debug.Log("Right Clicked");
-            var hit = ClickCastRay();
-            var tempDict = new Dictionary<GameObject, GameObject>(); 
-            foreach(var unit in SelectedUnits)
-            {
-                tempDict.Add(unit, hit.collider.gameObject);
+                var hit = ClickCastRay();
+                if (hit.collider.gameObject.CompareTag("Henchman") &&
+                    !SelectedUnits.Contains(hit.collider.gameObject)) // dont select if already selected
+                {
+                    Debug.Log($"Hit {hit.collider.name}");
+                    hit.collider.gameObject.SendMessage("RequestSelect", this.gameObject); // Select Henchmen
+                }
             }
 
-            object[] tempArray = new object[2]; //doing this is required because of how send message works
-            tempArray[0] = tempDict;
-            tempArray[1] = this.gameObject;
-            henchmenDirector.SendMessage("RedirectHenchmen", tempArray); // Player ==> Henchmen group parent
-            SelectedUnits.Clear(); // reset dict so more entities can be selected
+            if (Mouse.current.rightButton.wasPressedThisFrame)
+            {
+                Debug.Log("Right Clicked");
+                var hit = ClickCastRay();
+                var tempDict = new Dictionary<GameObject, GameObject>();
+                foreach (var unit in SelectedUnits)
+                {
+                    tempDict.Add(unit, hit.collider.gameObject);
+                }
+
+                object[] tempArray = new object[2]; //doing this is required because of how send message works
+                tempArray[0] = tempDict;
+                tempArray[1] = this.gameObject;
+                henchmenDirector.SendMessage("RedirectHenchmen", tempArray); // Player ==> Henchmen group parent
+                SelectedUnits.Clear();                                       // reset dict so more entities can be selected
+            }
+        }else
+        {
+            return;
         }
-        Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
-        rb.velocity = Vector3.ClampMagnitude(move * (speedMultiplier * Time.deltaTime), maxSpeed);
     }
+    
 
     private RaycastHit ClickCastRay()
     {
-        Debug.Log($"MouseDown at {ms.position.ReadValue()}");
+        Debug.Log($"MouseDown at {Mouse.current.position.ReadValue()}");
         RaycastHit hit;
-        Ray target = Camera.main.ScreenPointToRay(ms.position.ReadValue());
+        Ray target = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
         Physics.Raycast(target,out hit, Mathf.Infinity, henchmenLayer);
         Debug.Log($"Hit {hit.collider.name}");
         return hit;
@@ -93,6 +115,7 @@ public class BossPlayerController : MonoBehaviour
     void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
+        print(moveInput);
     }
     public void Select(GameObject unit)
     {
@@ -100,21 +123,14 @@ public class BossPlayerController : MonoBehaviour
         SelectedUnits.Add(unit);
         Debug.Log("BreakPoint");
     }
-
-    // void OnRelease(InputValue value)
-    // {d
-    //     Debug.Log($"MouseDown at {ms.position.ReadValue()}");
-    //     RaycastHit hit;
-    //     Ray target = Camera.main.ScreenPointToRay(ms.position.ReadValue());
-    //     Physics.Raycast(target, out hit);
-    //     if (hit.collider.gameObject.layer == 4)
-    //     {
-    //         Dictionary<GameObject, GameObject> tempDict = new Dictionary<GameObject, GameObject>();
-    //         foreach (var unit in SelectedUnits)
-    //         {
-    //             tempDict.Append(new KeyValuePair<GameObject, GameObject>(unit, hit.collider.gameObject));
-    //         } 
-    //         GameObject.FindObjectOfType<HenchmenDirector>().RedirectHenchmen(tempDict, this.gameObject); // Redirect Henchmen after selecting target
-    //     }
-    // }
+    
+    void OnSelect(InputValue value)
+    {
+        var hit = ClickCastRay();
+        if (hit.collider.gameObject.CompareTag("Henchman") && !SelectedUnits.Contains(hit.collider.gameObject)) // dont select if already selected
+        {
+            Debug.Log($"Hit {hit.collider.name}");
+            hit.collider.gameObject.SendMessage("RequestSelect", this.gameObject); // Select Henchmen
+        }
+    }
 }
