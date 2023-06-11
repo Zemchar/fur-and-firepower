@@ -64,10 +64,10 @@ public class BossPlayerController : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 dir = new Vector3(moveInput.x, 0, moveInput.y).normalized;
+        Vector3 dir = new Vector3(moveInput.x, 0, moveInput.y);
         if (IsOwner)
         {
-            rb.velocity = Vector3.ClampMagnitude(dir * (speedMultiplier * Time.deltaTime), maxSpeed);
+            rb.velocity = Vector3.ClampMagnitude(dir * speedMultiplier, maxSpeed);
             if (Mouse.current.leftButton.wasPressedThisFrame) // I DONT KNOW WHY but with networking you cannot assign mouse.current to a variable
             {
                 var hit = ClickCastRay();
