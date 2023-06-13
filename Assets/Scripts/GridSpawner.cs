@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 public class GridSpawner : MonoBehaviour
 {
@@ -41,13 +40,25 @@ public class GridSpawner : MonoBehaviour
                 if (row == 0 || col == 0 || row == gridSize - 1 || col == gridSize - 1) //coordinates of the border of the grid
                 {
                     if (row == gridSize / 2 && col == 0)
+                    {
                         temp = Instantiate(pieces["deadend-right"].piece, new Vector3(x, 0, y), pieces["deadend-right"].rotation, this.transform.Find("Border").transform); //left-most piece
+                        temp.GetComponentInParent<RoadPiece>().value = 0;
+                    }
                     else if (row == gridSize / 2 && col == gridSize - 1)
+                    {
                         temp = Instantiate(pieces["deadend-left"].piece, new Vector3(x, 0, y), pieces["deadend-left"].rotation, this.transform.Find("Border").transform); //right-most piece
+                        temp.GetComponentInParent<RoadPiece>().value = 0;
+                    }
                     else if (col == gridSize / 2 && row == 0)
+                    {
                         temp = Instantiate(pieces["deadend-up"].piece, new Vector3(x, 0, y), pieces["deadend-up"].rotation, this.transform.Find("Border").transform); //bottom-most piece
+                        temp.GetComponentInParent<RoadPiece>().value = 0;
+                    }
                     else if (col == gridSize / 2 && row == gridSize - 1)
+                    {
                         temp = Instantiate(pieces["deadend-down"].piece, new Vector3(x, 0, y), pieces["deadend-down"].rotation, this.transform.Find("Border").transform); //top-most piece
+                        temp.GetComponentInParent<RoadPiece>().value = 0;
+                    }
                     else
                         temp = Instantiate(pieces["border"].piece, new Vector3(x, 0, y), pieces["border"].rotation, this.transform.Find("Border").transform);
 
@@ -229,7 +240,8 @@ public class GridSpawner : MonoBehaviour
             }    
         }
         //else
-        //Debug.Log("Hitting nothing forward");
+            //Debug.Log("Hitting nothing forward");
+        
         if (possiblePieces.Count > 1)
         {
             possiblePieces.Remove("deadend-down");
