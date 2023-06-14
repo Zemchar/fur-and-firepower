@@ -26,6 +26,12 @@ public class GlobalVars : ScriptableObject
 
 }
 
+public enum GameMode
+{
+    single,
+    multi
+}
+
 public static class Utils
 {
     public static void print(string message)
