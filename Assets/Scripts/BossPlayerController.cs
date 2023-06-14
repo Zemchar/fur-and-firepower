@@ -67,37 +67,43 @@ public class BossPlayerController : NetworkBehaviour
         Vector3 dir = new Vector3(moveInput.x, 0, moveInput.y);
         if (IsOwner)
         {
-            rb.velocity = Vector3.ClampMagnitude(dir * speedMultiplier, maxSpeed);
-            if (Mouse.current.leftButton.wasPressedThisFrame) // I DONT KNOW WHY but with networking you cannot assign mouse.current to a variable
-            {
-                var hit = ClickCastRay();
-                if (hit.collider.gameObject.CompareTag("Henchman") &&
-                    !SelectedUnits.Contains(hit.collider.gameObject)) // dont select if already selected
-                {
-                    Debug.Log($"Hit {hit.collider.name}");
-                    hit.collider.gameObject.SendMessage("RequestSelect", this.gameObject); // Select Henchmen
-                }
-            }
-
-            if (Mouse.current.rightButton.wasPressedThisFrame)
-            {
-                Debug.Log("Right Clicked");
-                var hit = ClickCastRay();
-                var tempDict = new Dictionary<GameObject, GameObject>();
-                foreach (var unit in SelectedUnits)
-                {
-                    tempDict.Add(unit, hit.collider.gameObject);
-                }
-
-                object[] tempArray = new object[2]; //doing this is required because of how send message works
-                tempArray[0] = tempDict;
-                tempArray[1] = this.gameObject;
-                henchmenDirector.SendMessage("RedirectHenchmen", tempArray); // Player ==> Henchmen group parent
-                SelectedUnits.Clear();                                       // reset dict so more entities can be selected
-            }
+            UpdateFunction(dir);
         }
     }
-    
+
+    private void UpdateFunction(Vector3 dir)
+    {
+        rb.velocity = Vector3.ClampMagnitude(dir * speedMultiplier, maxSpeed);
+        if (Mouse.current.leftButton
+            .wasPressedThisFrame) // I DONT KNOW WHY but with networking you cannot assign mouse.current to a variable
+        {
+            var hit = ClickCastRay();
+            if (hit.collider.gameObject.CompareTag("Henchman") &&
+                !SelectedUnits.Contains(hit.collider.gameObject)) // dont select if already selected
+            {
+                Debug.Log($"Hit {hit.collider.name}");
+                hit.collider.gameObject.SendMessage("RequestSelect", this.gameObject); // Select Henchmen
+            }
+        }
+
+        if (Mouse.current.rightButton.wasPressedThisFrame)
+        {
+            Debug.Log("Right Clicked");
+            var hit = ClickCastRay();
+            var tempDict = new Dictionary<GameObject, GameObject>();
+            foreach (var unit in SelectedUnits)
+            {
+                tempDict.Add(unit, hit.collider.gameObject);
+            }
+
+            object[] tempArray = new object[2]; //doing this is required because of how send message works
+            tempArray[0] = tempDict;
+            tempArray[1] = this.gameObject;
+            henchmenDirector.SendMessage("RedirectHenchmen", tempArray); // Player ==> Henchmen group parent
+            SelectedUnits.Clear();                                       // reset dict so more entities can be selected
+        }
+    }
+
 
     private RaycastHit ClickCastRay()
     {

@@ -23,8 +23,8 @@ public class GameManager : NetworkBehaviour
 {
     private static GameManager _instance;
     public NetworkVariable<float> _roundTimer = new NetworkVariable<float>(-1f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<GAMEVARS> gameVars;
-    public NetworkVariable<ROUNDVARS> currentRound;
+    public GAMEVARS gameVars;
+    public ROUNDVARS currentRound;
     // Start is called before the first frame update
     void Awake()
     {
@@ -47,18 +47,18 @@ public class GameManager : NetworkBehaviour
     /// Creates a new game when requested
     /// </summary>
     /// <param name="vars"></param>
-    public void NewGame(GAMEVARS vars)
-    {
-        gameVars.Value = vars;
-        currentRound.Value = new ROUNDVARS();
-        currentRound.Value.ROUNDNUMBER = 0;
-        currentRound.Value.DAYNUMBER = 0;
-        currentRound.Value.PLAYERCOUNT = 0;
-        currentRound.Value.ROUNDSTART = DateTime.Now.TimeOfDay;
-        currentRound.Value.ROUNDLENGTH = 60f;
-        _roundTimer.Value = currentRound.Value.ROUNDLENGTH;
-        StartCoroutine(GlobalCoordinatedTimer());
-    }
+    // public void NewGame(GAMEVARS vars)
+    // {
+    //     gameVars = vars;
+    //     currentRound = new ROUNDVARS();
+    //     currentRound.ROUNDNUMBER = 0;
+    //     currentRound.DAYNUMBER = 0;
+    //     currentRound.PLAYERCOUNT = 0;
+    //     currentRound.ROUNDSTART = DateTime.Now.TimeOfDay;
+    //     currentRound.ROUNDLENGTH = 60f;
+    //     _roundTimer.Value = currentRound.Value.ROUNDLENGTH;
+    //     StartCoroutine(GlobalCoordinatedTimer());
+    // }
 
     IEnumerator GlobalCoordinatedTimer()
     {
@@ -71,7 +71,7 @@ public class GameManager : NetworkBehaviour
     }
     private void ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
-        if (NetworkManager.ConnectedClientsIds.Count < gameVars.Value.MAXPLAYERS)
+        if (NetworkManager.ConnectedClientsIds.Count < gameVars.MAXPLAYERS)
         {
             response.Approved = true;
         }
