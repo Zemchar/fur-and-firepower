@@ -7,6 +7,7 @@ public class RoadPiece : MonoBehaviour
 {
     private TextMeshPro text;
     public int value = -1;
+    private int passes = 30;
 
     private void Start()
     {
@@ -18,8 +19,11 @@ public class RoadPiece : MonoBehaviour
     private void Update()
     {
         text.text = "" + value;
-        if (value == -1 && this.name != "Border-Piece(Clone)")
+        if (value != 0 && this.name != "Border-Piece(Clone)" && passes > 0)//make more efficient later
+        {
             Check();
+            passes--;
+        }
 
     }
 
