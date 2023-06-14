@@ -95,9 +95,6 @@ public class BossPlayerController : NetworkBehaviour
                 henchmenDirector.SendMessage("RedirectHenchmen", tempArray); // Player ==> Henchmen group parent
                 SelectedUnits.Clear();                                       // reset dict so more entities can be selected
             }
-        }else
-        {
-            return;
         }
     }
     

@@ -26,22 +26,42 @@ public class UiManager : NetworkBehaviour
         _currentMenu = menu;
     }
 
-    public void hostGame()
+    public void hostGame(string mode = "host")
     {
-        StartCoroutine(HostGame());
+        StartCoroutine(HostGame(mode));
     }
-    private IEnumerator HostGame()
+    private IEnumerator HostGame(string mode  = "host")
     {
-        DontDestroyOnLoad(this.gameObject);
-        //this shit is awesome how did i not know about async loading
-        var asyncLoad = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Scenes/SampleScene");
-        print("Loading Scene");
-        while(!asyncLoad.isDone)
+        if (mode is "host")
         {
-            yield return null;
+            DontDestroyOnLoad(this.gameObject);
+            //this shit is awesome how did i not know about async loading
+            var asyncLoad = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Scenes/SampleScene");
+            print("Loading Scene");
+            while (!asyncLoad.isDone)
+            {
+                yield return null;
+            }
+
+            print("Scene Loaded");
+            NetworkManager.Singleton.StartHost();
+            Destroy(this.gameObject);
         }
-        print("Scene Loaded");
-        NetworkManager.Singleton.StartHost();
-        Destroy(this.gameObject);
+        else
+        {
+            DontDestroyOnLoad(this.gameObject);
+            //this shit is awesome how did i not know about async loading
+            var asyncLoad = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Scenes/SampleScene");
+            print("Loading Scene");
+            while (!asyncLoad.isDone)
+            {
+                yield return null;
+            }
+
+            print("Scene Loaded");
+            NetworkManager.Singleton.StartClient();
+            Destroy(this.gameObject);
+        }
     }
+    
 }
