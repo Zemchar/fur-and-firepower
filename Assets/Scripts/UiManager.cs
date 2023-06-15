@@ -42,7 +42,6 @@ public class UiManager : NetworkBehaviour
             {
                 yield return null;
             }
-
             print("Scene Loaded");
             NetworkManager.Singleton.StartHost();
             Destroy(this.gameObject);

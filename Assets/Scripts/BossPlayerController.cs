@@ -124,7 +124,6 @@ public class BossPlayerController : NetworkBehaviour
     void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
-        print(moveInput);
     }
     public void Select(GameObject unit)
     {
