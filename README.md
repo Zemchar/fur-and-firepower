@@ -1,7 +1,7 @@
 # Fur And Firepower
 Fun little game
 
-Trello: [https://trello.com/invite/furandfirepower/ATTId9d41f877b43dfa759984ce1cd882047A622DF1E](url)
+Trello: [https://trello.com/invite/furandfirepower/ATTId9d41f877b43dfa759984ce1cd882047A622DF1E](https://trello.com/invite/furandfirepower/ATTId9d41f877b43dfa759984ce1cd882047A622DF1E)
 # Contributing
 ## Getting started Programming with [a Git Manager](https://github.com/spoiledcat/git-for-unity)
 First, install git from their website or your package manager. 

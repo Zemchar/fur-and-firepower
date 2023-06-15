@@ -200,7 +200,7 @@ public class HenchmenController : NetworkBehaviour
             return;
         }
     }
-
+    
     private Vector3 CalculateFireDir()
     {
         transform.LookAt(CurrentTarget.transform);
@@ -210,7 +210,10 @@ public class HenchmenController : NetworkBehaviour
             Random.Range(-MaxSpread.z, MaxSpread.z));
         return dir.normalized;
     }
-
+    /// <summary>
+    /// Shoot function
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator Shoot()
     { 
         if (isShooting)
@@ -248,7 +251,12 @@ public class HenchmenController : NetworkBehaviour
         isShooting = false;
         yield break; // stop the coroutine
     }
-
+    /// <summary>
+    /// Bullet trail coroutine
+    /// </summary>
+    /// <param name="trail"></param>
+    /// <param name="hit"></param>
+    /// <returns></returns>
     private IEnumerator SpawnTrail(TrailRenderer trail, RaycastHit hit)
     {
         float time = 0;
@@ -261,10 +269,15 @@ public class HenchmenController : NetworkBehaviour
         }
 
         trail.transform.position = hit.point;
-        Instantiate(impactParticles, hit.point, Quaternion.LookRotation(hit.normal)); //TODO: Add particle effect
+        Instantiate(impactParticles, hit.point, Quaternion.LookRotation(hit.normal)); 
         Destroy(trail.gameObject, trail.time);
     }
    
+    /// <summary>
+    /// Redirects the henchmen to a new target.
+    /// Stops ALL coroutines.
+    /// </summary>
+    /// <param name="target"></param>
     public void SetTarget(GameObject target)
     {
         StopAllCoroutines();
@@ -287,6 +300,11 @@ public class HenchmenController : NetworkBehaviour
             SelectedInicator.enabled = false;
         } }
 
+    /// <summary>
+    /// This is called by a player character to request to select this object.
+    /// If the requester is on the same team, it will send a confirmation message.
+    /// </summary>
+    /// <param name="requester" description="The game object requesting the selection"></param>
     public void RequestSelect(GameObject requester)
     {
         Debug.Log($"Request to select {this.gameObject.name} from {requester.name}");
@@ -298,6 +316,13 @@ public class HenchmenController : NetworkBehaviour
         }
         //If not true, do not return confirmation message
     }
+    /// <summary>
+    /// Generates a random point on a sphere to aid with wandering
+    /// </summary>
+    /// <param name="origin"></param>
+    /// <param name="distance"></param>
+    /// <param name="layermask"></param>
+    /// <returns></returns>
     public static Vector3 RandomNavSphere (Vector3 origin, float distance, int layermask) {
         Vector3 randomDirection = UnityEngine.Random.insideUnitSphere * distance;
         randomDirection += origin;
@@ -305,6 +330,12 @@ public class HenchmenController : NetworkBehaviour
         NavMesh.SamplePosition (randomDirection, out navHit, distance, layermask);
         return navHit.position;
     }
+    /// <summary>
+    /// Simple Damage Calculator
+    /// </summary>
+    /// <param name="damage"></param>
+    /// <param name="damageModifier"></param>
+    /// <returns></returns>
     public float CalcDamage(float damage, float damageModifier = 1)
     {
         return damage * damageModifier;
