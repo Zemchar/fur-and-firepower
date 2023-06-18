@@ -9,6 +9,9 @@ TagManager:
   - Wall
   - Road
   - HenchmanDirector
+  - UI_TimerSlider
+  - UI_AffinitySlider
+  - GO_PlayerCamera
   layers:
   - Default
   - TransparentFX
