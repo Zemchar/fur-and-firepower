@@ -590,6 +590,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f54c785d88cea6b1aeacae590e98cc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mode: 1
   vc: {fileID: 7261618993476972248}
   speedMultiplier: 5
   maxSpeed: 5
@@ -846,8 +847,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6563039962069217210}
-  m_LocalRotation: {x: 0.20213133, y: 0.0000000084256095, z: -0.0000000017389749,
-    w: 0.97935843}
+  m_LocalRotation: {x: 0.20213133, y: -0.000000008425604, z: 0.000000001738974, w: 0.97935843}
   m_LocalPosition: {x: 0, y: 0, z: -0.0000017464406}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -925,7 +925,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7118707985501504477}
-  m_LocalRotation: {x: 0.2199119, y: 0.000000008392583, z: -0.0000000018919442, w: 0.9755198}
+  m_LocalRotation: {x: 0.2199119, y: -0.000000008392583, z: 0.0000000018919442, w: 0.9755198}
   m_LocalPosition: {x: 0, y: 0, z: -0.000003056271}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -992,7 +992,7 @@ GameObject:
   - component: {fileID: 8987824565824241641}
   m_Layer: 2
   m_Name: MainFollowCam
-  m_TagString: Untagged
+  m_TagString: GO_PlayerCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

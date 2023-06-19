@@ -24,6 +24,14 @@ public class GlobalVars : ScriptableObject
         Structure_PoliceStation,
     }
 
+    public enum StreetState
+    {
+        UnControlled,
+        Unrest,
+        Controlled, 
+        
+    }
+
 }
 
 public enum GameMode
