@@ -7,7 +7,6 @@ public class StoreController : MonoBehaviour
 {
     private double ViolentAffinity = 0.5;
     private double CharmAffinity = 0.5;
-    private float SpinUpMaxTime = 3f;
     public GameObject ShopScreenPrefab { get; set; }
     public float health {get; private set;}
     public GlobalVars.StreetState streetState = GlobalVars.StreetState.UnControlled; //TODO: MOVE TO STREET CONTROLLER
