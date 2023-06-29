@@ -172,7 +172,7 @@ public class HenchmenController : NetworkBehaviour
          * This is a temporary fix. */
         if (TargetPos.magnitude == Mathf.Infinity || TargetPos.magnitude == Mathf.NegativeInfinity)
         {
-            print("TargetPos is infinity");
+            //print("TargetPos is infinity");
             isGuarding = false;
             yield break; //Retry 
         }
@@ -289,10 +289,10 @@ public class HenchmenController : NetworkBehaviour
             CurrentTarget = target;
             Bobber.Stop();
             SelectedInicator.enabled = false;
-            print($"New Target Set ({target.name}) of type {CurrentTargetType}");
+            //print($"New Target Set ({target.name}) of type {CurrentTargetType}");
         }
         catch{
-            Debug.LogError($"Target {target.name} does not have AccessibleProperties TargetType, defualting.");
+            //Debug.LogError($"Target {target.name} does not have AccessibleProperties TargetType, defualting.");
             henchmenState = HenchmenState.None; // Required to redirect
             CurrentTargetType = defaultTargetType;
             CurrentTarget = null;
@@ -307,7 +307,7 @@ public class HenchmenController : NetworkBehaviour
     /// <param name="requester" description="The game object requesting the selection"></param>
     public void RequestSelect(GameObject requester)
     {
-        Debug.Log($"Request to select {this.gameObject.name} from {requester.name}");
+        //Debug.Log($"Request to select {this.gameObject.name} from {requester.name}");
         if (requester.GetComponent<Accessibleproperties>().TeamAlignment == teamAlignment)
         {
             SelectedInicator.enabled = true;
