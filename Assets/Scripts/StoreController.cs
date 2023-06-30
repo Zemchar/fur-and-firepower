@@ -6,12 +6,16 @@ using UnityEngine.UI;
 
 public class StoreController : MonoBehaviour
 {
-    [SerializeField] private GameObject healthBarObject;
+    [SerializeField] private GameObject storeUI;
     private GameObject healthBar;
     private Image healthNum;
-    [SerializeField] private GameObject minigameObject;
     private GameObject minigame;
     private Image storeOwner;
+    private Image gameBar;
+    private GameObject startButton;
+    private GameObject complete;
+    private GameObject wrong;
+    private bool dead = false;
 
     private double ViolentAffinity = 0.5;
     private double CharmAffinity = 0.5;
@@ -28,19 +32,22 @@ public class StoreController : MonoBehaviour
     {
         health = 100f;
         totalHealth = 100f;
+        GameObject tempStore = Instantiate(storeUI, new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0), this.transform);
+        tempStore.transform.localPosition = new Vector3(0.525f, 0.1f, 0);
+        tempStore.transform.localRotation = Quaternion.Euler(0, 90, 0);
 
-        healthBar = Instantiate(healthBarObject, new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0), this.transform);
-        healthBar.transform.localPosition = new Vector3(0.525f, 0.1f, 0);
-        healthBar.transform.localRotation = Quaternion.Euler(0, 90, 0);
-        healthBar.SetActive(false);
-        healthNum = this.transform.Find("HealthBarCanvas(Clone)/HealthBar/Health").gameObject.GetComponent<Image>();
 
-        minigame = Instantiate(minigameObject, new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0), this.transform);
-        minigame.transform.localPosition = new Vector3(0.525f, 0.1f, 0);
-        minigame.transform.localRotation = Quaternion.Euler(0, 90, 0);
-        //minigame.SetActive(false);
-        storeOwner = this.transform.Find("MinigameCanvas(Clone)/Minigame/StoreOwner").gameObject.GetComponent<Image>();
+        healthBar = this.transform.Find("StoreUI(Clone)/HealthBar").gameObject;
+        healthNum = this.transform.Find("StoreUI(Clone)/HealthBar/Health").gameObject.GetComponent<Image>();
+        minigame = this.transform.Find("StoreUI(Clone)/Minigame").gameObject;
+        storeOwner = this.transform.Find("StoreUI(Clone)/Minigame/StoreOwner").gameObject.GetComponent<Image>();
+        gameBar = this.transform.Find("StoreUI(Clone)/Minigame/GameBar/Bar").gameObject.GetComponent<Image>();
+        startButton = this.transform.Find("StoreUI(Clone)/StartButton").gameObject;
+        complete = this.transform.Find("StoreUI(Clone)/Complete").gameObject;
+        wrong = this.transform.Find("StoreUI(Clone)/Wrong").gameObject;
 
+        healthNum.fillAmount = 0;
+        gameBar.fillAmount = 0;
 
         int temp = UnityEngine.Random.Range(0, 2);
         if(temp == 0)
@@ -48,14 +55,12 @@ public class StoreController : MonoBehaviour
             ViolentAffinity = 1;
             CharmAffinity = 0;
             storeOwner.sprite = Resources.Load<Sprite>("Sprites/violent jerma");
-            Debug.Log("v");
         }
         else
         {
             ViolentAffinity = 0;
             CharmAffinity = 1;
             storeOwner.sprite = Resources.Load<Sprite>("Sprites/charm jerma");
-            Debug.Log("c");
         }
 
 
@@ -94,9 +99,13 @@ public class StoreController : MonoBehaviour
         {
             this.GetComponent<Renderer>().material.color = new Color(0.2f, 0.2f, 0.2f);
         }
-        else if (storeHealth == State.dead)
+        else if (storeHealth == State.dead && !dead)
         {
+            dead = true;
             this.GetComponent<Renderer>().material.color = new Color(0, 0, 0);
+            StopAllCoroutines();
+            healthBar.SetActive(false);
+            minigame.SetActive(true);
         }
     }
 
@@ -125,7 +134,7 @@ public class StoreController : MonoBehaviour
             return;
         }
 
-        health -= damage;
+        health -= damage * 10; //temporialy multiplied by 10 for testing
         healthNum.fillAmount = health / totalHealth;
         StopCoroutine("ShowHealthBar");
         StartCoroutine("ShowHealthBar");
@@ -144,6 +153,39 @@ public class StoreController : MonoBehaviour
             storeHealth = State.dead;
 
 
+    }
+
+    public void ViolentButton()
+    {
+        Debug.Log(ViolentAffinity);
+        if (ViolentAffinity == 1)
+        {
+            gameBar.fillAmount += 0.1f;
+            Debug.Log("violent");
+        }
+        else
+        {
+
+        }
+    }
+
+    public void CharmButton()
+    {
+        Debug.Log(CharmAffinity);
+        if (CharmAffinity == 1)
+        {
+            gameBar.fillAmount += 0.1f;
+            Debug.Log("ChArm");
+        }
+        else
+        {
+
+        }
+    }
+
+    public void StartButton()
+    {
+        
     }
 
     private IEnumerator ShowHealthBar()
