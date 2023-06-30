@@ -6,14 +6,18 @@ using UnityEngine.UI;
 
 public class StoreController : MonoBehaviour
 {
-    [SerializeField] private GameObject healthBarTemp;
+    [SerializeField] private GameObject healthBarObject;
     private GameObject healthBar;
+    private Image healthNum;
+    [SerializeField] private GameObject minigameObject;
+    private GameObject minigame;
+    private Image storeOwner;
+
     private double ViolentAffinity = 0.5;
     private double CharmAffinity = 0.5;
     public GameObject ShopScreenPrefab { get; set; }
     public float health {get; private set;}
     private float totalHealth;
-    private Image healthNum;
     public GlobalVars.StreetState streetState = GlobalVars.StreetState.UnControlled; //TODO: MOVE TO STREET CONTROLLER
 
     //Degradation state
@@ -24,10 +28,35 @@ public class StoreController : MonoBehaviour
     {
         health = 100f;
         totalHealth = 100f;
-        healthBar = Instantiate(healthBarTemp, new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0), this.transform);
+
+        healthBar = Instantiate(healthBarObject, new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0), this.transform);
         healthBar.transform.localPosition = new Vector3(0.525f, 0.1f, 0);
         healthBar.transform.localRotation = Quaternion.Euler(0, 90, 0);
+        healthBar.SetActive(false);
         healthNum = this.transform.Find("HealthBarCanvas(Clone)/HealthBar/Health").gameObject.GetComponent<Image>();
+
+        minigame = Instantiate(minigameObject, new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0), this.transform);
+        minigame.transform.localPosition = new Vector3(0.525f, 0.1f, 0);
+        minigame.transform.localRotation = Quaternion.Euler(0, 90, 0);
+        //minigame.SetActive(false);
+        storeOwner = this.transform.Find("MinigameCanvas(Clone)/Minigame/StoreOwner").gameObject.GetComponent<Image>();
+
+
+        int temp = UnityEngine.Random.Range(0, 2);
+        if(temp == 0)
+        {
+            ViolentAffinity = 1;
+            CharmAffinity = 0;
+            storeOwner.sprite = Resources.Load<Sprite>("Sprites/violent jerma");
+            Debug.Log("v");
+        }
+        else
+        {
+            ViolentAffinity = 0;
+            CharmAffinity = 1;
+            storeOwner.sprite = Resources.Load<Sprite>("Sprites/charm jerma");
+            Debug.Log("c");
+        }
 
 
         if (ViolentAffinity + CharmAffinity != 1)
@@ -40,7 +69,12 @@ public class StoreController : MonoBehaviour
 
     private void Update()
     {
-        if(storeHealth == State.h100)
+        UpdateHealthState();
+    }
+
+    private void UpdateHealthState()//currently just changes health based off current health state, can be changed to have animation and effects later
+    {
+        if (storeHealth == State.h100)
         {
             this.GetComponent<Renderer>().material.color = new Color(1, 1, 1);
         }
@@ -83,7 +117,7 @@ public class StoreController : MonoBehaviour
         }
     }
     
-    public void InflictDamage(float damage)
+    public void InflictDamage(float damage)//changes health according to damage and updates health state
     {
         if (health <= 0)
         {
@@ -93,29 +127,29 @@ public class StoreController : MonoBehaviour
 
         health -= damage;
         healthNum.fillAmount = health / totalHealth;
+        StopCoroutine("ShowHealthBar");
+        StartCoroutine("ShowHealthBar");
+
         if(health == totalHealth)
-        {
             storeHealth = State.h100;
-        }
         else if(health > totalHealth * 0.75f)
-        {
             storeHealth = State.h75;
-        }
         else if (health > totalHealth * 0.5f)
-        {
             storeHealth = State.h50;
-        }
         else if (health > totalHealth * 0.25f)
-        {
             storeHealth = State.h25;
-        }
         else if (health > 0)
-        {
             storeHealth = State.h0;
-        }
         else if (health == 0)
-        {
             storeHealth = State.dead;
-        }
+
+
+    }
+
+    private IEnumerator ShowHealthBar()
+    {
+        healthBar.SetActive(true);
+        yield return new WaitForSeconds(5);
+        healthBar.SetActive(false);
     }
 }

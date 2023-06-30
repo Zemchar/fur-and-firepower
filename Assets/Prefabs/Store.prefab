@@ -111,7 +111,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 225a25a628357d49681fd6e71a7a2fee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthBarTemp: {fileID: 1262442121292450501, guid: 78d9d20862000e04394ee07e8284e067,
+  healthBarObject: {fileID: 1262442121292450501, guid: 78d9d20862000e04394ee07e8284e067,
+    type: 3}
+  minigameObject: {fileID: 8977147485107651793, guid: 2718ae06efdaa6a46910e9ddd4a45db0,
     type: 3}
   streetState: 0
 --- !u!114 &1255513010284790572
