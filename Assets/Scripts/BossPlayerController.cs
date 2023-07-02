@@ -18,7 +18,7 @@ public class BossPlayerController : NetworkBehaviour
     private Rigidbody rb;
 
     [SerializeField] private GameMode mode = GameMode.multi;
-    [SerializeField] private CinemachineFreeLook vc;
+    [SerializeField] public CinemachineFreeLook vc;
     private Camera cam;
     [FormerlySerializedAs("speed")] [SerializeField] float speedMultiplier = 12f;
     [SerializeField] float maxSpeed = 5f;
@@ -63,13 +63,14 @@ public class BossPlayerController : NetworkBehaviour
     private void Awake()
     {
         cam = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
-        henchmenDirector = GameObject.FindWithTag("HenchmanDirector").GetComponent<HenchmenDirector>();
         rb = GetComponent<Rigidbody>();
+        HenchmenDirector.Singleton.RequestSpawnHenchmen(10, this.gameObject, teamAlignment);
         if (mode == GameMode.single)
         {
             GetComponent<NetworkObject>().enabled = false;
             GetComponent<ClientNetworkTransform>().enabled = false;
-        }
+        }        
+
     }
 
     // Update is called once per frame
@@ -104,7 +105,7 @@ public class BossPlayerController : NetworkBehaviour
                 object[] tempArray = new object[2]; //doing this is required because of how send message works
                 tempArray[0] = tempDict;
                 tempArray[1] = this.gameObject;
-                henchmenDirector.SendMessage("RedirectHenchmen", tempArray); // Player ==> Henchmen group parent
+                HenchmenDirector.Singleton.RedirectHenchmen(tempArray); // Player ==> Henchmen group parent
                 SelectedUnits.Clear();                                       // reset dict so more entities can be selected
             }
         }
@@ -113,11 +114,11 @@ public class BossPlayerController : NetworkBehaviour
 
     private RaycastHit ClickCastRay()
     {
-        Debug.Log($"MouseDown at {Mouse.current.position.ReadValue()}");
+        // Debug.Log($"MouseDown at {Mouse.current.position.ReadValue()}");
         RaycastHit hit;
         Ray target = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
         Physics.Raycast(target,out hit, Mathf.Infinity, henchmenLayer);
-        Debug.Log($"Hit {hit.collider.name}");
+        // Debug.Log($"Hit {hit.collider.name}");
         return hit;
     }
 

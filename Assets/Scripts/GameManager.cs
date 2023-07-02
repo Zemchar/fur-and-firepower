@@ -22,7 +22,8 @@ public class ROUNDVARS
 }
 public class GameManager : NetworkBehaviour
 {
-    public static GameManager _instance { get; private set; } // singleton
+    public static GameManager Singleton { get; private set; } // singleton
+    public RESOURCEPOOL resourcePool;
     public NetworkVariable<float> _roundTimer = new NetworkVariable<float>(-1f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     public NetworkVariable<int> DAYNUM;
     public GAMEVARS gameVars;
@@ -30,9 +31,9 @@ public class GameManager : NetworkBehaviour
     void Awake()
     {
         DontDestroyOnLoad(this.gameObject); // Preserve Object. Debating removing this.
-        if (_instance == null) // only one game manager
+        if (Singleton == null) // only one game manager
         {
-            _instance = this; 
+            Singleton = this; 
         }
         else
         {

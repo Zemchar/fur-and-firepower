@@ -1,23 +1,31 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
+using Random = UnityEngine.Random;
 
 public class HenchmenDirector : MonoBehaviour
 {
+    public static HenchmenDirector Singleton { get; private set; }
 
     private Dictionary<GameObject, GlobalVars.TeamAlignment> henchmenDict =
         new Dictionary<GameObject, GlobalVars.TeamAlignment>();
     // Start is called before the first frame update
     
-    public void RequestSpawnHenchmen(int count, GameObject Owner, GlobalVars.TeamAlignment teamAlignment)
+    private void Start()
+    {
+        Singleton ??= this;
+    }
+    public void RequestSpawnHenchmen(int count, GameObject owner, GlobalVars.TeamAlignment teamAlignment)
     {
         for (var i = 0; i < count; i++)
         {
-            var henchmen = Instantiate(Resources.Load<GameObject>("Prefabs/Henchman"), this.transform.position + new Vector3(Random.Range(0f, 10f), 0, Random.Range(0f, 10f)), Quaternion.identity);
+            var henchmen = Instantiate(GameManager.Singleton.resourcePool.pc_HenchmanBase, this.transform.position + new Vector3(Random.Range(0f, 10f), 0, Random.Range(0f, 10f)), Quaternion.identity);
             henchmen.GetComponent<HenchmenController>().teamAlignment = teamAlignment;
-            henchmen.GetComponent<HenchmenController>().Owner = Owner;
+            henchmen.GetComponent<HenchmenController>().Owner = owner;
             henchmenDict.Append(new KeyValuePair<GameObject, GlobalVars.TeamAlignment>(henchmen, teamAlignment));
         }
     }
