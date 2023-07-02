@@ -87,14 +87,14 @@ public class BossPlayerController : NetworkBehaviour
                 if (hit.collider.gameObject.CompareTag("Henchman") &&
                     !SelectedUnits.Contains(hit.collider.gameObject)) // dont select if already selected
                 {   
-                    Debug.Log($"Hit {hit.collider.name}");
+                    //Debug.Log($"Hit {hit.collider.name}");
                     hit.collider.gameObject.SendMessage("RequestSelect", this.gameObject); // Select Henchmen
                 }
             }
 
             if (Mouse.current.rightButton.wasPressedThisFrame)
             {
-                Debug.Log("Right Clicked");
+                //Debug.Log("Right Clicked");
                 var hit = ClickCastRay();
                 var tempDict = new Dictionary<GameObject, GameObject>();
                 foreach (var unit in SelectedUnits)
@@ -114,11 +114,11 @@ public class BossPlayerController : NetworkBehaviour
 
     private RaycastHit ClickCastRay()
     {
-        // Debug.Log($"MouseDown at {Mouse.current.position.ReadValue()}");
+        //Debug.Log($"MouseDown at {Mouse.current.position.ReadValue()}");
         RaycastHit hit;
         Ray target = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
         Physics.Raycast(target,out hit, Mathf.Infinity, henchmenLayer);
-        // Debug.Log($"Hit {hit.collider.name}");
+        //Debug.Log($"Hit {hit.collider.name}");
         return hit;
     }
 
@@ -128,9 +128,9 @@ public class BossPlayerController : NetworkBehaviour
     }
     public void Select(GameObject unit)
     {
-        Debug.Log("Selected " + unit.name);
+        //Debug.Log("Selected " + unit.name);
         SelectedUnits.Add(unit);
-        Debug.Log("BreakPoint");
+        //Debug.Log("BreakPoint");
     }
     
     void OnSelect(InputValue value)
@@ -138,7 +138,7 @@ public class BossPlayerController : NetworkBehaviour
         var hit = ClickCastRay();
         if (hit.collider.gameObject.CompareTag("Henchman") && !SelectedUnits.Contains(hit.collider.gameObject)) // dont select if already selected
         {
-            Debug.Log($"Hit {hit.collider.name}");
+            //Debug.Log($"Hit {hit.collider.name}");
             hit.collider.gameObject.SendMessage("RequestSelect", this.gameObject); // Select Henchmen
         }
     }

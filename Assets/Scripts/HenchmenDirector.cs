@@ -31,7 +31,7 @@ public class HenchmenDirector : MonoBehaviour
     }
     public void RedirectHenchmen(object[] input)
     {
-        Debug.Log("Message Received. Redirecting Henchmen");
+        //Debug.Log("Message Received. Redirecting Henchmen");
         var targets = (Dictionary<GameObject, GameObject>)input[0];
         var requester = (GameObject)input[1];
         foreach (var henchmen in targets)
