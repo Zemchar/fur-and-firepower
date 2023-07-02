@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028386, g: 0.22571427, b: 0.3069231, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -258,7 +258,7 @@ PrefabInstance:
     - target: {fileID: 1929109939728020226, guid: a6ccdb0b884ac56d0930d9fe3f6092e3,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.0000013098304
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1929109939728020226, guid: a6ccdb0b884ac56d0930d9fe3f6092e3,
         type: 3}
@@ -268,12 +268,12 @@ PrefabInstance:
     - target: {fileID: 1929109939728020226, guid: a6ccdb0b884ac56d0930d9fe3f6092e3,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000008392583
+      value: 0.000000008392583
       objectReference: {fileID: 0}
     - target: {fileID: 1929109939728020226, guid: a6ccdb0b884ac56d0930d9fe3f6092e3,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.0000000018919442
+      value: -0.0000000018919442
       objectReference: {fileID: 0}
     - target: {fileID: 6420291800141503076, guid: a6ccdb0b884ac56d0930d9fe3f6092e3,
         type: 3}
@@ -368,7 +368,7 @@ PrefabInstance:
     - target: {fileID: 6496278449907681768, guid: a6ccdb0b884ac56d0930d9fe3f6092e3,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.0000008732203
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6496278449907681768, guid: a6ccdb0b884ac56d0930d9fe3f6092e3,
         type: 3}
@@ -507,7 +507,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 5000
-  field of view: 40
+  field of view: 58.42
   orthographic: 0
   orthographic size: 10
   m_Depth: 0
@@ -532,8 +532,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 799852348}
-  m_LocalRotation: {x: 0.20213135, y: 0.000000030378956, z: -0.0000000062699606, w: 0.97935843}
-  m_LocalPosition: {x: 0, y: 2.9, z: -4}
+  m_LocalRotation: {x: 0, y: 0.7279861, z: 0, w: 0.68559194}
+  m_LocalPosition: {x: 3.0132003, y: 1.8690001, z: 0.042000003}
   m_LocalScale: {x: 1.83128, y: 1.83128, z: 1.83128}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -765,6 +765,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5571337888136579293, guid: f0be58dc02661d645a660cdfa982ac62,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.023
+      objectReference: {fileID: 0}
+    - target: {fileID: 7519541270006666970, guid: f0be58dc02661d645a660cdfa982ac62,
+        type: 3}
+      propertyPath: m_Lens.FieldOfView
+      value: 58.42
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f0be58dc02661d645a660cdfa982ac62, type: 3}
@@ -1678,12 +1688,12 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  _SortingLayer: 0
-  _SortingLayerID: 0
-  _SortingOrder: 0
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 3903559640884551956}
   m_maskType: 0
+  _SortingLayer: 0
+  _SortingLayerID: 0
+  _SortingOrder: 0
 --- !u!65 &3826302437204667231
 BoxCollider:
   m_ObjectHideFlags: 0

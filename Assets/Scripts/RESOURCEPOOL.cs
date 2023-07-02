@@ -19,4 +19,5 @@ public class RESOURCEPOOL : ScriptableObject
      * 
      */
     public GameObject pc_HenchmanBase; // Base henchman prefab
+    
 }

@@ -64,7 +64,7 @@ public class BossPlayerController : NetworkBehaviour
     {
         cam = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
         rb = GetComponent<Rigidbody>();
-        HenchmenDirector.Singleton.RequestSpawnHenchmen(10, this.gameObject, teamAlignment);
+        // HenchmenDirector.Singleton.RequestSpawnHenchmen(10, this.gameObject, teamAlignment);
         if (mode == GameMode.single)
         {
             GetComponent<NetworkObject>().enabled = false;

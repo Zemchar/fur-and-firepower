@@ -22,6 +22,8 @@ public class StoreController : MonoBehaviour
     private double ViolentAffinity = 0.5;
     private double CharmAffinity = 0.5;
     public GameObject ShopScreenPrefab { get; set; }
+    public CinemachineVirtualCamera minigameVC;
+
     public float health {get; private set;}
     private float totalHealth;
     public GlobalVars.StreetState streetState = GlobalVars.StreetState.UnControlled; //TODO: MOVE TO STREET CONTROLLER
@@ -32,6 +34,7 @@ public class StoreController : MonoBehaviour
 
     public void Start()
     {
+        minigameVC.m_Priority = 0;
         health = 100f;
         totalHealth = 100f;
         GameObject tempStore = Instantiate(storeUI, new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0), this.transform);
@@ -120,12 +123,8 @@ public class StoreController : MonoBehaviour
             TakeoverInProgress = true;
             Instantiate(ShopScreenPrefab, this.transform.position, Quaternion.identity).GetComponent<Canvas>().worldCamera =
                 GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
-            /*TODO:
-             * 1. Display Takeover Screen
-             * 2. Start Coroutine to spin up takeover timer
-             * 3. PLayer has mini game to threaten or charm shopkeep
-             * 4. If player wins, takeover is successful, else player is kicked out and shop shuts down and doesnt count towards changing the street state.
-             */
+            minigameVC.m_Priority = 9; // SET BACK TO ZERO WHEN DONE WITH MINIGAME
+            instructor.GetComponent<BossPlayerController>().vc.m_Priority = 3;  
         }
     }
     
