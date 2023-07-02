@@ -17,6 +17,7 @@ public class StoreController : MonoBehaviour
     private GameObject complete;
     private GameObject wrong;
     private bool dead = false;
+    private bool TakeoverInProgress = false;
 
     private double ViolentAffinity = 0.5;
     private double CharmAffinity = 0.5;
@@ -71,7 +72,6 @@ public class StoreController : MonoBehaviour
             CharmAffinity = 0.5;
             throw new Exception("Violent and Charm Affinity must add up to 1, setting each to 0.5");
         }
-        TakeoverScreen.gameObject.SetActive(false);
     }
 
     private void Update()
@@ -117,6 +117,7 @@ public class StoreController : MonoBehaviour
         {
             print("Attempting Takeover");
             //TODO: Maybe mutliple takeover sequences?
+            TakeoverInProgress = true;
             Instantiate(ShopScreenPrefab, this.transform.position, Quaternion.identity).GetComponent<Canvas>().worldCamera =
                 GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
             /*TODO:
