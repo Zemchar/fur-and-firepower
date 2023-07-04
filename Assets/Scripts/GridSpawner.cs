@@ -29,9 +29,7 @@ public class GridSpawner : MonoBehaviour
     private void RandomizeGrid() // this can be called elsewhere now
     {
         
-        RPSingleton.Access.rp.gcm_RoadPieces = RPSingleton.Access.rp.gcm_RoadPieces;
         Random.InitState(seed);
-
         FillDictionary();
 
         gridSize += 2; //just to add a border around the grid

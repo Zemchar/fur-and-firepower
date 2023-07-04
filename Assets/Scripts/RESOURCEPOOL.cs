@@ -16,8 +16,17 @@ public class RESOURCEPOOL : ScriptableObject
      * (oh also all variables need to be declared as public static)
      * ####################################### THE IMPORTANT BIT ##############################################
      * pc = A player controllable object. Stuff the player can directly influence like henchmen or the base bosses.
-     * gcm = Game Critical Model. Stuff essential for the base game to work, such as road pieces or building prefabs. 
+     * gcm = Game Critical Model. Stuff essential for the base game to work, such as road pieces or building prefabs.
+     * gcv = Game Critical Values. Stuff that needs to be stored, like random gen seeds
      */
+    [Header("Player Controllable Objects")]
     public GameObject pc_HenchmanBase; // Base henchman prefab
+    
+    [Header("Game Critical Models")]
     public GameObject[] gcm_RoadPieces; // Road pieces
+    
+    [Header("Game Critical Values")]
+    public int gcv_RandomSeed; // Random Seed
+    public int gcv_GridSize; // Grid Size
+
 }

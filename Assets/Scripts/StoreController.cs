@@ -42,8 +42,23 @@ public class StoreController : MonoBehaviour
         GameObject tempStore = Instantiate(storeUI, new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0), this.transform);
         tempStore.transform.localPosition = new Vector3(0.525f, 0.1f, 0);
         tempStore.transform.localRotation = Quaternion.Euler(0, 90, 0);
+        //TODO: Randomly select minigame from resource pool, instantiate, and disable
 
-
+        
+        /*
+         * func picminigame(affinities) => instantiate returned ui => setActive(false);
+         * => Mingqame = minigame that was picked.
+         * later when needed
+         * setActive(true);
+         * startMinigame(affinites);
+         * ==> Another script
+         * Minigame1.cs handles all function of that, returns takover info when done.
+         * 
+         * 
+         * 
+         */
+        
+        
         healthBar = this.transform.Find("StoreUI(Clone)/HealthBar").gameObject;
         healthNum = this.transform.Find("StoreUI(Clone)/HealthBar/Health").gameObject.GetComponent<Image>();
         minigame = this.transform.Find("StoreUI(Clone)/Minigame").gameObject;
@@ -149,6 +164,9 @@ public class StoreController : MonoBehaviour
             TakeoverInProgress = true;
             healthBar.SetActive(false);
             minigame.SetActive(true);
+            //minigame = minagameObj;
+            //minigame.GetComponent<Minigame1>().StartMinigame();
+            //minigame.sendMessage("StartMinigame");
             minigameVC.m_Priority = 9; // SET BACK TO ZERO WHEN DONE WITH MINIGAME
             instructor.GetComponent<BossPlayerController>().vc.m_Priority = 3;  
         }
