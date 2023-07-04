@@ -23,7 +23,7 @@ public class HenchmenDirector : MonoBehaviour
     {
         for (var i = 0; i < count; i++)
         {
-            var henchmen = Instantiate(GameManager.Singleton.resourcePool.pc_HenchmanBase, this.transform.position + new Vector3(Random.Range(0f, 10f), 0, Random.Range(0f, 10f)), Quaternion.identity);
+            var henchmen = Instantiate(RPSingleton.Access.rp.pc_HenchmanBase, this.transform.position + new Vector3(Random.Range(0f, 10f), 0, Random.Range(0f, 10f)), Quaternion.identity);
             henchmen.GetComponent<HenchmenController>().teamAlignment = teamAlignment;
             henchmen.GetComponent<HenchmenController>().Owner = owner;
             henchmenDict.Append(new KeyValuePair<GameObject, GlobalVars.TeamAlignment>(henchmen, teamAlignment));

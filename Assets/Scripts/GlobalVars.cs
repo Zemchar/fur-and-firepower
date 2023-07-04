@@ -32,6 +32,11 @@ public class GlobalVars : ScriptableObject
         
     }
 
+    public enum Minigame
+    {
+        StardewCharmer,
+    }
+
 }
 
 public enum GameMode

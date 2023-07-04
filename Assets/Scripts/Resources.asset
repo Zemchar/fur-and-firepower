@@ -14,3 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pc_HenchmanBase: {fileID: 4198588045314329065, guid: 277f845dd9bbf9648a51f318fef8e5df,
     type: 3}
+  gcm_RoadPieces:
+  - {fileID: 4284881783251934289, guid: d4b2fea39dee6ae4ab69ce865cb2b09b, type: 3}
+  - {fileID: 675034739931272496, guid: f0a4d0fbca6cd11409f3a6852dbbfc2f, type: 3}
+  - {fileID: 7531591240611823186, guid: b8f36be2cfdfc784292e9df348e18fe1, type: 3}
+  - {fileID: 3027720742302425261, guid: 68a2e2bae67a8564c982aa38b303e897, type: 3}
+  - {fileID: 977847298522721838, guid: e35c88100d2fd764a822fbb4c1052058, type: 3}
+  - {fileID: 4897179080636805606, guid: 29c4fbd082f9e96418f0437a95738e72, type: 3}

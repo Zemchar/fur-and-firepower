@@ -1,14 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class GridSpawner : MonoBehaviour
 {
     [SerializeField] private LayerMask layerMask;
-    [SerializeField] private GameObject[] roadPiece;
     [SerializeField] private int gridSize = 15; //size of the grid, works best with odd numbers
     private int tileWidth = 60; //size of each grid tile
     private GameObject[,] grid;
+    [FormerlySerializedAs("Seed")] [SerializeField] private int seed;
+    [InspectorButton("RandomizeGrid")] [SerializeField] private bool randomizeGrid;
+
 
     private class Piece
     {
@@ -20,6 +23,15 @@ public class GridSpawner : MonoBehaviour
 
     private void Start()
     {
+        RandomizeGrid();
+    }
+
+    private void RandomizeGrid() // this can be called elsewhere now
+    {
+        
+        RPSingleton.Access.rp.gcm_RoadPieces = RPSingleton.Access.rp.gcm_RoadPieces;
+        Random.InitState(seed);
+
         FillDictionary();
 
         gridSize += 2; //just to add a border around the grid
@@ -37,30 +49,36 @@ public class GridSpawner : MonoBehaviour
                 x = tileWidth * (col - gridSize / 2);
                 y = tileWidth * (row - gridSize / 2);
 
-                if (row == 0 || col == 0 || row == gridSize - 1 || col == gridSize - 1) //coordinates of the border of the grid
+                if (row == 0 || col == 0 || row == gridSize - 1 ||
+                    col == gridSize - 1) //coordinates of the border of the grid
                 {
                     if (row == gridSize / 2 && col == 0)
                     {
-                        temp = Instantiate(pieces["deadend-right"].piece, new Vector3(x, 0, y), pieces["deadend-right"].rotation, this.transform.Find("Border").transform); //left-most piece
+                        temp = Instantiate(pieces["deadend-right"].piece, new Vector3(x, 0, y),
+                            pieces["deadend-right"].rotation, this.transform.Find("Border").transform); //left-most piece
                         temp.GetComponentInParent<RoadPiece>().value = 0;
                     }
                     else if (row == gridSize / 2 && col == gridSize - 1)
                     {
-                        temp = Instantiate(pieces["deadend-left"].piece, new Vector3(x, 0, y), pieces["deadend-left"].rotation, this.transform.Find("Border").transform); //right-most piece
+                        temp = Instantiate(pieces["deadend-left"].piece, new Vector3(x, 0, y),
+                            pieces["deadend-left"].rotation, this.transform.Find("Border").transform); //right-most piece
                         temp.GetComponentInParent<RoadPiece>().value = 0;
                     }
                     else if (col == gridSize / 2 && row == 0)
                     {
-                        temp = Instantiate(pieces["deadend-up"].piece, new Vector3(x, 0, y), pieces["deadend-up"].rotation, this.transform.Find("Border").transform); //bottom-most piece
+                        temp = Instantiate(pieces["deadend-up"].piece, new Vector3(x, 0, y), pieces["deadend-up"].rotation,
+                            this.transform.Find("Border").transform); //bottom-most piece
                         temp.GetComponentInParent<RoadPiece>().value = 0;
                     }
                     else if (col == gridSize / 2 && row == gridSize - 1)
                     {
-                        temp = Instantiate(pieces["deadend-down"].piece, new Vector3(x, 0, y), pieces["deadend-down"].rotation, this.transform.Find("Border").transform); //top-most piece
+                        temp = Instantiate(pieces["deadend-down"].piece, new Vector3(x, 0, y),
+                            pieces["deadend-down"].rotation, this.transform.Find("Border").transform); //top-most piece
                         temp.GetComponentInParent<RoadPiece>().value = 0;
                     }
                     else
-                        temp = Instantiate(pieces["border"].piece, new Vector3(x, 0, y), pieces["border"].rotation, this.transform.Find("Border").transform);
+                        temp = Instantiate(pieces["border"].piece, new Vector3(x, 0, y), pieces["border"].rotation,
+                            this.transform.Find("Border").transform);
 
                     grid[row, col] = temp;
                 }
@@ -89,33 +107,44 @@ public class GridSpawner : MonoBehaviour
                 }
             }
         }
-
     }
 
     private void GridGenerator(int row, int col)
     {
-        if (grid[row, col] != null)
-            return;
-            
-        //converts row and col numbers into usable x and y coordinates
-        int x = tileWidth * (row - gridSize / 2);
-        int y = tileWidth * (col - gridSize / 2);
+        while (true) // No need to do recursive calls
+        //Juniper waz here 😎🤘
+        {
+            if (grid[row, col] != null) return;
 
-        string tempPiece = PieceChecker(x, y);
-        GameObject temp = Instantiate(pieces[tempPiece].piece, new Vector3(x, 0, y), pieces[tempPiece].rotation, this.transform);
-        grid[row, col] = temp;
+            //converts row and col numbers into usable x and y coordinates
+            int x = tileWidth * (row - gridSize / 2);
+            int y = tileWidth * (col - gridSize / 2);
 
-        int rand = Random.Range(1, 4);
-        if (rand == 1)
-            GridGenerator(row + 1, col);
-        if (rand == 2)
-            GridGenerator(row, col + 1);
-        if (rand == 3)
-            GridGenerator(row - 1, col);
-        if (rand == 4)
-            GridGenerator(row, col - 1);
+            string tempPiece = PieceChecker(x, y);
+            GameObject temp = Instantiate(pieces[tempPiece].piece, new Vector3(x, 0, y), pieces[tempPiece].rotation, this.transform);
+            grid[row, col] = temp;
+
+            int rand = Random.Range(1, 4);
+            switch (rand) // i refactored this for u :) -juniper 
+            {
+                case 1:
+                    row += 1;
+                    continue;
+                case 2:
+                    col += 1;
+                    continue;
+                case 3:
+                    row -= 1;
+                    continue;
+                case 4:
+                    col -= 1;
+                    continue;
+            }
+
+            break;
+        }
     }
-
+    
     private string PieceChecker(int x, int y)
     {
         int height = 15;
@@ -265,83 +294,84 @@ public class GridSpawner : MonoBehaviour
 
     private void FillDictionary() //fills the dictionary "pieces" with all 16 possible piece types/rotations
     {
+        pieces = new Dictionary<string, Piece>(); // clean out old dict
         Piece temp = new Piece();
-        temp.piece = roadPiece[0];
+        temp.piece = RPSingleton.Access.rp.gcm_RoadPieces[0];
         temp.rotation = Quaternion.Euler(0, 0, 0);
         pieces.Add("border", temp); //border piece
 
         temp = new Piece();
-        temp.piece = roadPiece[1];
+        temp.piece = RPSingleton.Access.rp.gcm_RoadPieces[1];
         temp.rotation = Quaternion.Euler(0, 0, 0);
         pieces.Add("deadend-down", temp); //deadend piece with road side facing down
 
         temp = new Piece();
-        temp.piece = roadPiece[1];
+        temp.piece = RPSingleton.Access.rp.gcm_RoadPieces[1];
         temp.rotation = Quaternion.Euler(0, 90, 0);
         pieces.Add("deadend-left", temp); //deadend piece with road side facing left
 
         temp = new Piece();
-        temp.piece = roadPiece[1];
+        temp.piece = RPSingleton.Access.rp.gcm_RoadPieces[1];
         temp.rotation = Quaternion.Euler(0, 180, 0);
         pieces.Add("deadend-up", temp); //deadend piece with road side facing up
 
         temp = new Piece();
-        temp.piece = roadPiece[1];
+        temp.piece = RPSingleton.Access.rp.gcm_RoadPieces[1];
         temp.rotation = Quaternion.Euler(0, 270, 0);
         pieces.Add("deadend-right", temp); //deadend piece with road side facing right
 
         temp = new Piece();
-        temp.piece = roadPiece[2];
+        temp.piece = RPSingleton.Access.rp.gcm_RoadPieces[2];
         temp.rotation = Quaternion.Euler(0, 0, 0);
         pieces.Add("straight-vertical", temp); //straight piece with road sides going vertical
 
         temp = new Piece();
-        temp.piece = roadPiece[2];
+        temp.piece = RPSingleton.Access.rp.gcm_RoadPieces[2];
         temp.rotation = Quaternion.Euler(0, 90, 0);
         pieces.Add("straight-horizontal", temp); //straight piece with road sides going horizontal
 
         temp = new Piece();
-        temp.piece = roadPiece[3];
+        temp.piece = RPSingleton.Access.rp.gcm_RoadPieces[3];
         temp.rotation = Quaternion.Euler(0, 0, 0);
         pieces.Add("L-down", temp); //L piece with the bottom of the L facing down
 
         temp = new Piece();
-        temp.piece = roadPiece[3];
+        temp.piece = RPSingleton.Access.rp.gcm_RoadPieces[3];
         temp.rotation = Quaternion.Euler(0, 90, 0);
         pieces.Add("L-left", temp); //L piece with the bottom of the L facing left
 
         temp = new Piece();
-        temp.piece = roadPiece[3];
+        temp.piece = RPSingleton.Access.rp.gcm_RoadPieces[3];
         temp.rotation = Quaternion.Euler(0, 180, 0);
         pieces.Add("L-up", temp); //L piece with the bottom of the L facing up
 
         temp = new Piece();
-        temp.piece = roadPiece[3];
+        temp.piece = RPSingleton.Access.rp.gcm_RoadPieces[3];
         temp.rotation = Quaternion.Euler(0, 270, 0);
         pieces.Add("L-right", temp); //L piece with the bottom of the L facing right
 
         temp = new Piece();
-        temp.piece = roadPiece[4];
+        temp.piece = RPSingleton.Access.rp.gcm_RoadPieces[4];
         temp.rotation = Quaternion.Euler(0, 0, 0);
         pieces.Add("T-down", temp); //T piece with the bottom of the T facing down
 
         temp = new Piece();
-        temp.piece = roadPiece[4];
+        temp.piece = RPSingleton.Access.rp.gcm_RoadPieces[4];
         temp.rotation = Quaternion.Euler(0, 90, 0);
         pieces.Add("T-left", temp); //T piece with the bottom of the T facing left
 
         temp = new Piece();
-        temp.piece = roadPiece[4];
+        temp.piece = RPSingleton.Access.rp.gcm_RoadPieces[4];
         temp.rotation = Quaternion.Euler(0, 180, 0);
         pieces.Add("T-up", temp); //T piece with the bottom of the T facing up
 
         temp = new Piece();
-        temp.piece = roadPiece[4];
+        temp.piece = RPSingleton.Access.rp.gcm_RoadPieces[4];
         temp.rotation = Quaternion.Euler(0, 270, 0);
         pieces.Add("T-right", temp); //T piece with the bottom of the T facing right
 
         temp = new Piece();
-        temp.piece = roadPiece[5];
+        temp.piece = RPSingleton.Access.rp.gcm_RoadPieces[5];
         temp.rotation = Quaternion.Euler(0, 0, 0);
         pieces.Add("cross", temp); //cross piece
 

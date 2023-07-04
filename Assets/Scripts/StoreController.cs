@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class StoreController : MonoBehaviour
@@ -31,6 +32,7 @@ public class StoreController : MonoBehaviour
     //Degradation state
     private enum State { h100, h75, h50, h25, h0, dead }
     private State storeHealth = State.h100;
+    [FormerlySerializedAs("takoverPrefab")] [SerializeField] private GameObject takeoverPrefab;
 
     public void Start()
     {
@@ -46,7 +48,7 @@ public class StoreController : MonoBehaviour
         healthNum = this.transform.Find("StoreUI(Clone)/HealthBar/Health").gameObject.GetComponent<Image>();
         minigame = this.transform.Find("StoreUI(Clone)/Minigame").gameObject;
         storeOwner = this.transform.Find("StoreUI(Clone)/Minigame/StoreOwner").gameObject.GetComponent<Image>();
-        gameBar = this.transform.Find("StoreUI(Clone)/Minigame/GameBar/Bar").gameObject.GetComponent<Image>();
+        gameBar = this.transform.Find("StoreUI(Clone)/Minigame/GameBar/Bar").gameObject.GetComponent<Image>(); // Tags?
         startButton = this.transform.Find("StoreUI(Clone)/StartButton").gameObject;
         complete = this.transform.Find("StoreUI(Clone)/Complete").gameObject;
         wrong = this.transform.Find("StoreUI(Clone)/Wrong").gameObject;
@@ -82,8 +84,29 @@ public class StoreController : MonoBehaviour
         UpdateHealthState();
     }
 
+    private GameObject POI;
+    [SerializeField] private GlobalVars.Minigame minigameType;
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.GetComponentInParent<BossPlayerController>())
+        {
+            POI = other.gameObject;
+            AttemptTakeover(other.gameObject);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (POI == other.gameObject)
+        {
+            takeoverPrefab.SetActive(false);
+        }
+    }
+
     private void UpdateHealthState()//currently just changes health based off current health state, can be changed to have animation and effects later
     {
+        //TODO: Why do you check this every single frame, it should only be checked when the health changes.
         if (storeHealth == State.h100)
         {
             this.GetComponent<Renderer>().material.color = new Color(1, 1, 1);
@@ -116,13 +139,16 @@ public class StoreController : MonoBehaviour
 
     public void AttemptTakeover(GameObject instructor)
     {
-        if ((StreetManagerController.Singleton.streetState == GlobalVars.StreetState.UnControlled)&& !TakeoverInProgress)
+        if (instructor.layer == LayerMask.NameToLayer("Ignore Raycast"))
+        {
+            return;}
+        if ((StreetManagerController.Singleton.streetState == GlobalVars.StreetState.Unrest)&& !TakeoverInProgress)
         {
             print("Attempting Takeover");
             //TODO: Maybe mutliple takeover sequences?
             TakeoverInProgress = true;
-            Instantiate(ShopScreenPrefab, this.transform.position, Quaternion.identity).GetComponent<Canvas>().worldCamera =
-                GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
+            healthBar.SetActive(false);
+            minigame.SetActive(true);
             minigameVC.m_Priority = 9; // SET BACK TO ZERO WHEN DONE WITH MINIGAME
             instructor.GetComponent<BossPlayerController>().vc.m_Priority = 3;  
         }
@@ -141,6 +167,8 @@ public class StoreController : MonoBehaviour
         StopCoroutine("ShowHealthBar");
         StartCoroutine("ShowHealthBar");
 
+        
+        // OZ PLEASE use switch statements for this. Much more efficent and easier to read
         if(health == totalHealth)
             storeHealth = State.h100;
         else if(health > totalHealth * 0.75f)
@@ -171,27 +199,9 @@ public class StoreController : MonoBehaviour
         }
     }
 
-    public void CharmButton()
-    {
-        Debug.Log(CharmAffinity);
-        if (CharmAffinity == 1)
-        {
-            gameBar.fillAmount += 0.1f;
-            Debug.Log("ChArm");
-        }
-        else
-        {
-
-        }
-    }
-
-    public void StartButton()
-    {
-        
-    }
-
     private IEnumerator ShowHealthBar()
     {
+
         healthBar.SetActive(true);
         yield return new WaitForSeconds(5);
         healthBar.SetActive(false);
