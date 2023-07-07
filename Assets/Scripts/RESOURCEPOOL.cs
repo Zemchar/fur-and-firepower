@@ -28,5 +28,6 @@ public class RESOURCEPOOL : ScriptableObject
     [Header("Game Critical Values")]
     public int gcv_RandomSeed; // Random Seed
     public int gcv_GridSize; // Grid Size
-
+    [Tooltip("List of all the teams in the game and their properties")]
+    public GlobalVars.TeamProperties[] gcv_teamProps; // Team Colors
 }

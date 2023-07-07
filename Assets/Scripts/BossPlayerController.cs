@@ -72,6 +72,12 @@ public class BossPlayerController : NetworkBehaviour
         }        
 
     }
+    private void Start()
+    {
+        henchmenDirector = HenchmenDirector.Singleton;
+        StreetManagerController.Singleton.RegisterTeamPresent(teamAlignment); // lets street manager know that this team is present
+
+    }
 
     // Update is called once per frame
     void Update()

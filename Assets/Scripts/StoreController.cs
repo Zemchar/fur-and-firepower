@@ -34,6 +34,12 @@ public class StoreController : MonoBehaviour
     private State storeHealth = State.h100;
     [FormerlySerializedAs("takoverPrefab")] [SerializeField] private GameObject takeoverPrefab;
 
+    public void Awake()
+    {
+        StreetManagerController.Singleton.RegisterStore();
+
+    }
+
     public void Start()
     {
         minigameVC.m_Priority = 0;
@@ -93,10 +99,11 @@ public class StoreController : MonoBehaviour
             throw new Exception("Violent and Charm Affinity must add up to 1, setting each to 0.5");
         }
     }
+    
 
     private void Update()
     {
-        UpdateHealthState();
+        UpdateHealthState(); //dont do this every frame please
     }
 
     private GameObject POI;
@@ -159,6 +166,8 @@ public class StoreController : MonoBehaviour
             return;}
         if ((StreetManagerController.Singleton.streetState == GlobalVars.StreetState.Unrest)&& !TakeoverInProgress)
         {
+            StreetManagerController.Singleton.RegisterCapture(instructor.GetComponent<Accessibleproperties>().TeamAlignment);
+            
             print("Attempting Takeover");
             //TODO: Maybe mutliple takeover sequences?
             TakeoverInProgress = true;
