@@ -308,10 +308,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 225a25a628357d49681fd6e71a7a2fee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  storeUI: {fileID: 6159085432808625646, guid: 213cfbe352494d34688e932da41e20a3, type: 3}
   minigameVC: {fileID: 7519541270006666970}
   streetState: 0
-  takeoverPrefab: {fileID: 529555803}
+  takeoverPrefab: {fileID: 219307844}
   minigameType: 0
 --- !u!114 &1255513010284790572
 MonoBehaviour:

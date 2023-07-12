@@ -5,16 +5,17 @@ using UnityEngine.Serialization;
 
 public class GridSpawner : MonoBehaviour
 {
-    [SerializeField] private LayerMask layerMask;
+    [SerializeField] private LayerMask layerMask; //layer that raycasts will check for other grid pieces, currently should be "ground"
     [SerializeField] private int gridSize = 15; //size of the grid, works best with odd numbers
     private int tileWidth = 60; //size of each grid tile
-    private GameObject[,] grid;
+    private GameObject[,] grid; //where entire grid of gameobjects is stored
     [FormerlySerializedAs("Seed")] [SerializeField] private int seed;
     [InspectorButton("RandomizeGrid")] [SerializeField] private bool randomizeGrid;
 
 
     private class Piece
     {
+        //class for storing a pieces gameobject and rotation
         public GameObject piece { get; set; }
         public Quaternion rotation { get; set; }
     }
@@ -23,22 +24,24 @@ public class GridSpawner : MonoBehaviour
 
     private void Start()
     {
+        gridSize += 2; //just to add a border around the grid
+        FillDictionary();
+
         RandomizeGrid();
     }
 
     private void RandomizeGrid() // this can be called elsewhere now
     {
-        
-        Random.InitState(seed);
-        FillDictionary();
 
-        gridSize += 2; //just to add a border around the grid
         grid = new GameObject[gridSize, gridSize];
+
+        Random.InitState(seed);
 
         GameObject temp;
         int x;
         int y;
 
+        //these for-loops are for filling the border of the grid
         for (var row = 0; row < gridSize; row++)
         {
             for (var col = 0; col < gridSize; col++)
@@ -85,13 +88,13 @@ public class GridSpawner : MonoBehaviour
 
         bool filled = false;
 
-        while (!filled)
+        while (!filled) //will run until every spot is filled
         {
-            //bottom left quadrant
+            //picks random coordinate
             int tempRow = Random.Range(1, gridSize - 1);
             int tempCol = Random.Range(1, gridSize - 1);
 
-            if (grid[tempRow, tempCol] == null)
+            if (grid[tempRow, tempCol] == null) //makes sure random coordinate is not already occupied
                 GridGenerator(tempRow, tempCol);
 
             //check if entire grid is filled
@@ -145,11 +148,12 @@ public class GridSpawner : MonoBehaviour
     
     private string PieceChecker(int x, int y)
     {
-        int height = 15;
+        //list of all possible pieces
         List<string> possiblePieces = new List<string> { "deadend-down", "deadend-left", "deadend-up", "deadend-right", "straight-vertical", "straight-horizontal", "L-down", "L-left", "L-up", "L-right", "T-down", "T-left", "T-up", "T-right", "cross" };
 
+        int height = 15;
         RaycastHit hit;
-        if (Physics.Raycast(new Vector3(x, height, y), transform.TransformDirection(Vector3.back), out hit, 40, layerMask))
+        if (Physics.Raycast(new Vector3(x, height, y), transform.TransformDirection(Vector3.back), out hit, 40, layerMask)) //checks back direction and removes possible pieces depending on if there is a wall or open road in that direction
         {
             //Debug.DrawRay(new Vector3(x, height, y), transform.TransformDirection(Vector3.back) * hit.distance, Color.green, Mathf.Infinity);
             if (hit.transform.tag == "Wall")
@@ -179,7 +183,7 @@ public class GridSpawner : MonoBehaviour
         //else
             //Debug.Log("Hitting nothing back");
 
-        if (Physics.Raycast(new Vector3(x, height, y), transform.TransformDirection(Vector3.left), out hit, 40, layerMask))
+        if (Physics.Raycast(new Vector3(x, height, y), transform.TransformDirection(Vector3.left), out hit, 40, layerMask)) //checks left direction and removes possible pieces depending on if there is a wall or open road in that direction
         {
             //Debug.DrawRay(new Vector3(x, height, y), transform.TransformDirection(Vector3.left) * hit.distance, Color.red, Mathf.Infinity);
             if (hit.transform.tag == "Wall")
@@ -209,7 +213,7 @@ public class GridSpawner : MonoBehaviour
         //else
             //Debug.Log("Hitting nothing left");
 
-        if (Physics.Raycast(new Vector3(x, height, y), transform.TransformDirection(Vector3.right), out hit, 40, layerMask))
+        if (Physics.Raycast(new Vector3(x, height, y), transform.TransformDirection(Vector3.right), out hit, 40, layerMask)) //checks right direction and removes possible pieces depending on if there is a wall or open road in that direction
         {
             //Debug.DrawRay(new Vector3(x, height, y), transform.TransformDirection(Vector3.right) * hit.distance, Color.blue, Mathf.Infinity);
             if (hit.transform.tag == "Wall")
@@ -239,7 +243,7 @@ public class GridSpawner : MonoBehaviour
         //else
             //Debug.Log("Hitting nothing right");
 
-        if (Physics.Raycast(new Vector3(x, height, y), transform.TransformDirection(Vector3.forward), out hit, 40, layerMask))
+        if (Physics.Raycast(new Vector3(x, height, y), transform.TransformDirection(Vector3.forward), out hit, 40, layerMask)) //checks forward direction and removes possible pieces depending on if there is a wall or open road in that direction
         {
             //Debug.DrawRay(new Vector3(x, height, y), transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow, Mathf.Infinity);
             if (hit.transform.tag == "Wall")
@@ -269,14 +273,14 @@ public class GridSpawner : MonoBehaviour
         //else
             //Debug.Log("Hitting nothing forward");
         
-        if (possiblePieces.Count > 1)
+        if (possiblePieces.Count > 1)//unless the only thing left in the list is a deadend piece, remove the deadend pieces so they dont spawn
         {
             possiblePieces.Remove("deadend-down");
             possiblePieces.Remove("deadend-left");
             possiblePieces.Remove("deadend-up");
             possiblePieces.Remove("deadend-right");
         }
-        if (possiblePieces.Count > 1)
+        if (possiblePieces.Count > 1)//unless the only thing left in the list is a L piece, remove the L pieces so they dont spawn
         {
             possiblePieces.Remove("L-down");
             possiblePieces.Remove("L-left");
@@ -284,10 +288,10 @@ public class GridSpawner : MonoBehaviour
             possiblePieces.Remove("L-right");
         }
 
-        if (possiblePieces.Count <= 0)
+        if (possiblePieces.Count <= 0)//if there are no possible pieces, spawn border piece
             return "border";
         else
-            return possiblePieces[Random.Range(0, possiblePieces.Count - 1)];
+            return possiblePieces[Random.Range(0, possiblePieces.Count - 1)];//randomly choose from possible pieces and return that piece
     }
 
     private void FillDictionary() //fills the dictionary "pieces" with all 16 possible piece types/rotations

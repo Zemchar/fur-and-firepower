@@ -8,15 +8,7 @@ using UnityEngine.UI;
 
 public class StoreController : MonoBehaviour
 {
-    [SerializeField] private GameObject storeUI;
-    private GameObject healthBar;
-    private Image healthNum;
-    private GameObject minigame;
-    private Image storeOwner;
-    private Image gameBar;
-    private GameObject startButton;
-    private GameObject complete;
-    private GameObject wrong;
+
     private bool dead = false;
     private bool TakeoverInProgress = false;
 
@@ -39,9 +31,13 @@ public class StoreController : MonoBehaviour
         minigameVC.m_Priority = 0;
         health = 100f;
         totalHealth = 100f;
-        GameObject tempStore = Instantiate(storeUI, new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0), this.transform);
-        tempStore.transform.localPosition = new Vector3(0.525f, 0.1f, 0);
-        tempStore.transform.localRotation = Quaternion.Euler(0, 90, 0);
+
+
+        //GameObject tempStore = Instantiate(storeUI, new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0), this.transform);
+        //tempStore.transform.localPosition = new Vector3(0.525f, 0.1f, 0);
+        //tempStore.transform.localRotation = Quaternion.Euler(0, 90, 0);
+
+
         //TODO: Randomly select minigame from resource pool, instantiate, and disable
 
         
@@ -59,30 +55,30 @@ public class StoreController : MonoBehaviour
          */
         
         
-        healthBar = this.transform.Find("StoreUI(Clone)/HealthBar").gameObject;
-        healthNum = this.transform.Find("StoreUI(Clone)/HealthBar/Health").gameObject.GetComponent<Image>();
-        minigame = this.transform.Find("StoreUI(Clone)/Minigame").gameObject;
-        storeOwner = this.transform.Find("StoreUI(Clone)/Minigame/StoreOwner").gameObject.GetComponent<Image>();
-        gameBar = this.transform.Find("StoreUI(Clone)/Minigame/GameBar/Bar").gameObject.GetComponent<Image>(); // Tags?
-        startButton = this.transform.Find("StoreUI(Clone)/StartButton").gameObject;
-        complete = this.transform.Find("StoreUI(Clone)/Complete").gameObject;
-        wrong = this.transform.Find("StoreUI(Clone)/Wrong").gameObject;
+        //healthBar = this.transform.Find("StoreUI(Clone)/HealthBar").gameObject;
+        //healthNum = this.transform.Find("StoreUI(Clone)/HealthBar/Health").gameObject.GetComponent<Image>();
+        //minigame = this.transform.Find("StoreUI(Clone)/Minigame").gameObject;
+        //storeOwner = this.transform.Find("StoreUI(Clone)/Minigame/StoreOwner").gameObject.GetComponent<Image>();
+        //gameBar = this.transform.Find("StoreUI(Clone)/Minigame/GameBar/Bar").gameObject.GetComponent<Image>(); // Tags?
+        //startButton = this.transform.Find("StoreUI(Clone)/StartButton").gameObject;
+        //complete = this.transform.Find("StoreUI(Clone)/Complete").gameObject;
+        //wrong = this.transform.Find("StoreUI(Clone)/Wrong").gameObject;
 
-        healthNum.fillAmount = 0;
-        gameBar.fillAmount = 0;
+        //healthNum.fillAmount = 0;
+        //gameBar.fillAmount = 0;
 
         int temp = UnityEngine.Random.Range(0, 2);
         if(temp == 0)
         {
             ViolentAffinity = 1;
             CharmAffinity = 0;
-            storeOwner.sprite = Resources.Load<Sprite>("Sprites/violent jerma");
+            //storeOwner.sprite = Resources.Load<Sprite>("Sprites/violent jerma");
         }
         else
         {
             ViolentAffinity = 0;
             CharmAffinity = 1;
-            storeOwner.sprite = Resources.Load<Sprite>("Sprites/charm jerma");
+            //storeOwner.sprite = Resources.Load<Sprite>("Sprites/charm jerma");
         }
 
 
@@ -104,8 +100,10 @@ public class StoreController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("b");
         if (other.GetComponentInParent<BossPlayerController>())
         {
+            Debug.Log("a");
             POI = other.gameObject;
             AttemptTakeover(other.gameObject);
         }
@@ -147,8 +145,8 @@ public class StoreController : MonoBehaviour
             dead = true;
             this.GetComponent<Renderer>().material.color = new Color(0, 0, 0);
             StopAllCoroutines();
-            healthBar.SetActive(false);
-            minigame.SetActive(true);
+            //healthBar.SetActive(false);
+            //minigame.SetActive(true);
         }
     }
 
@@ -162,8 +160,12 @@ public class StoreController : MonoBehaviour
             print("Attempting Takeover");
             //TODO: Maybe mutliple takeover sequences?
             TakeoverInProgress = true;
-            healthBar.SetActive(false);
-            minigame.SetActive(true);
+
+
+            //healthBar.SetActive(false);
+            //minigame.SetActive(true);
+
+
             //minigame = minagameObj;
             //minigame.GetComponent<Minigame1>().StartMinigame();
             //minigame.sendMessage("StartMinigame");
@@ -181,9 +183,9 @@ public class StoreController : MonoBehaviour
         }
 
         health -= damage * 10; //temporialy multiplied by 10 for testing
-        healthNum.fillAmount = health / totalHealth;
-        StopCoroutine("ShowHealthBar");
-        StartCoroutine("ShowHealthBar");
+        //healthNum.fillAmount = health / totalHealth;
+        //StopCoroutine("ShowHealthBar");
+        //StartCoroutine("ShowHealthBar");
 
         
         // OZ PLEASE use switch statements for this. Much more efficent and easier to read
@@ -208,7 +210,7 @@ public class StoreController : MonoBehaviour
         Debug.Log(ViolentAffinity);
         if (ViolentAffinity == 1)
         {
-            gameBar.fillAmount += 0.1f;
+            //gameBar.fillAmount += 0.1f;
             Debug.Log("violent");
         }
         else
@@ -220,8 +222,8 @@ public class StoreController : MonoBehaviour
     private IEnumerator ShowHealthBar()
     {
 
-        healthBar.SetActive(true);
+        //healthBar.SetActive(true);
         yield return new WaitForSeconds(5);
-        healthBar.SetActive(false);
+        //healthBar.SetActive(false);
     }
 }
