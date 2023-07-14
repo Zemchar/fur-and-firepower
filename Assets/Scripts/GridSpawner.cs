@@ -6,11 +6,13 @@ using UnityEngine.Serialization;
 public class GridSpawner : MonoBehaviour
 {
     [SerializeField] private LayerMask layerMask; //layer that raycasts will check for other grid pieces, currently should be "ground"
-    [SerializeField] private int gridSize = 15; //size of the grid, works best with odd numbers
+    [SerializeField] private int inputGridSize = 15; //size of the grid, works best with odd numbers
+    private int gridSize = 15; //size of the grid, works best with odd numbers
     private int tileWidth = 60; //size of each grid tile
     private GameObject[,] grid; //where entire grid of gameobjects is stored
     [FormerlySerializedAs("Seed")] [SerializeField] private int seed;
-    [InspectorButton("RandomizeGrid")] [SerializeField] private bool randomizeGrid;
+    [InspectorButton("RandomizeGrid", ButtonWidth = 100)] [SerializeField] private bool randomizeGrid;
+    [InspectorButton("DeleteGrid", ButtonWidth = 50)] [SerializeField] private bool delete;
 
 
     private class Piece
@@ -24,15 +26,32 @@ public class GridSpawner : MonoBehaviour
 
     private void Start()
     {
-        gridSize += 2; //just to add a border around the grid
-        FillDictionary();
+        gridSize = inputGridSize + 2; //just to add a border around the grid
 
         RandomizeGrid();
     }
 
+    private void DeleteGrid()
+    {
+        if (grid != null)
+        {
+            for (var row = 0; row < gridSize; row++)
+            {
+                for (var col = 0; col < gridSize; col++)
+                {
+                    DestroyImmediate(grid[row, col]);
+                }
+            }
+        }
+    }
+
     private void RandomizeGrid() // this can be called elsewhere now
     {
+        FillDictionary();
 
+        DeleteGrid();
+
+        gridSize = inputGridSize + 2; //increase gridsize changes, update here
         grid = new GameObject[gridSize, gridSize];
 
         Random.InitState(seed);
@@ -297,6 +316,7 @@ public class GridSpawner : MonoBehaviour
     private void FillDictionary() //fills the dictionary "pieces" with all 16 possible piece types/rotations
     {
         pieces = new Dictionary<string, Piece>(); // clean out old dict
+
         Piece temp = new Piece();
         temp.piece = RPSingleton.Access.rp.gcm_RoadPieces[0];
         temp.rotation = Quaternion.Euler(0, 0, 0);
