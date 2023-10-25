@@ -1,3 +1,10 @@
+# NOTICE
+This project has been officaly postponed. Summer has ended and all contributors are busy. 
+
+This is **NOT** a notice of abandonment, I still plan on completing this project someday. 
+
+I still think a lot of the code and art here is wonderful, so I will release this publically until development restarts. This project is under copyright and this notice is not a license to redistribute, copy, sell, modify, or obtain patents for any part or component of this project that is original in any public way. Strictly private use is permitted.  Planning materials and design documents will remain private.
+
 # Fur And Firepower
 Fun little game
 
